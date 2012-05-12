@@ -1,0 +1,285 @@
+#--
+# This file contains the grammar of the RubyBreaker type annotation language.
+# TODO: This file probably needs more documentation
+
+require "treetop"
+require "#{File.dirname(__FILE__)}/type"
+require "#{File.dirname(__FILE__)}/type_unparser"
+
+grammar TypeGrammar
+  include RubyBreaker
+
+  rule meth_type 
+    space? meth_name space? '(' space? arg_types_opt:(arg_types)? space? ')' 
+    space? blk_type_opt:(blk_type)? space? '->' space? ret_type space?   
+    {
+      def value
+        mname = meth_name.text_value
+        args = arg_types_opt.empty? ? [] : arg_types_opt.value
+        blk = blk_type_opt.empty? ? nil : blk_type_opt.value
+        ret = ret_type.value
+        pos = RubyBreaker::Position.get()
+        pos.col = meth_name.interval.first
+		    return RubyBreaker::MethodType.new(mname,args,blk,ret,pos)
+		  end
+    }
+  end
+  
+  rule arg_types
+    moretypes:( arg_type space? ',' space? )* 
+    rest_arg_types
+    {
+      def value
+        types = []
+        moretypes.elements.each {|t| types << t.arg_type.value  }
+        if rest_arg_types.value.kind_of?(Array) 
+          types.concat(rest_arg_types.value)
+        else
+          types << rest_arg_types.value
+        end
+        return types
+      end
+    }
+  end
+
+  rule arg_type
+    or_type / or_parent_type / fusion_type / duck_type / simple_type
+  end
+
+  rule unambig_arg_type
+    or_parent_type / fusion_type / duck_type / simple_type
+  end
+
+  rule rest_arg_types
+    opt_varlen_types / opt_types / arg_type
+  end
+
+  rule opt_types
+    moretypes:( opt_type space? ',' space? )* opt_type
+    {
+      def value
+        types = []
+        moretypes.elements.each {|t| types << t.opt_type.value }
+        types << opt_type.value
+        return types
+      end
+    }
+  end
+
+  rule opt_varlen_types
+    moretypes:( opt_type space? ',' space? )* varlen_type
+    {
+      def value
+        types = []
+        moretypes.elements.each {|t| types << t.opt_type.value }
+        types << varlen_type.value
+        return types
+      end
+    }
+  end
+
+  rule opt_type
+    unambig_arg_type '?'
+    {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::OptionalType.new(unambig_arg_type.value, pos)
+      end
+    }
+  end
+
+  rule varlen_type
+    unambig_arg_type '*'
+    {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::VarLengthType.new(unambig_arg_type.value, pos)
+      end
+    }
+  end
+
+  rule or_parent_type
+    '(' or_type ')'
+    {
+      def value(); or_type.value; end
+    }
+  end
+  
+  rule or_type
+    left:(fusion_type / duck_type / simple_type) space? 
+    more:(space? '||' space? opt:(fusion_type / duck_type / simple_type) )+
+    {
+      def value
+        types = [left.value]
+        # let's flatten the types instead of nesting them
+        more.elements.each do |t|
+          types << t.opt.value
+        end
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::OrType.new(types, pos)
+      end
+    }
+  end
+  
+  rule blk_type 
+    blk_type_empty / blk_type_full
+  end
+  
+  rule blk_type_empty
+    '{' space? '}'
+    {
+      def value
+        return nil
+      end
+    }
+  end
+  
+  rule blk_type_full
+    '{' space? '|' space? arg_types_opt:(arg_types)? space? '|' space? 
+    blk_type_opt:(blk_type)? space? '->' space? ret_type '}' 
+    {
+      def value
+        args = arg_types_opt.empty? ? [] : arg_types_opt.value
+        blk = blk_type_opt.empty? ? nil : blk_type_opt.value
+        ret = ret_type.value        
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::BlockType.new(args,blk,ret,pos)
+      end
+    }
+  end
+  
+  rule fusion_type
+    simple_type '[' space? meth_name_list space? ']'
+    {
+      def value      
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::FusionType.new(simple_type.value, meth_name_list.value,pos)
+      end
+    }
+  end
+  
+  rule duck_type
+    '[' space? meth_name_list_opt:(meth_name_list)? space? ']'
+    {
+      def value      
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        if meth_name_list_opt.empty?
+          t = RubyBreaker::AnyType.new(pos)
+        else
+          mnames = meth_name_list_opt.value
+          t = RubyBreaker::DuckType.new(mnames,pos)
+        end
+        return t
+      end 
+    }
+  end
+  
+  rule meth_name_list
+    more_meth_names:(meth_name space? ',' space?)* meth_name
+    {
+      def value
+        mnames = []
+        more_meth_names.elements.each do |more_mname|
+          mnames << more_mname.meth_name.text_value
+        end
+        mnames << meth_name.text_value
+        return mnames
+      end 
+    }
+  end
+
+  rule ret_type
+    more:(simple_type space? ',' space?)* simple_type
+    {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        if more.empty?
+          return simple_type.value
+        else
+          types = []
+          more.elements.each {|e| types << e.simple_type.value  }
+          types << simple_type.value
+          return types
+        end
+      end
+    }
+  end
+
+  rule simple_type
+    nil_type / any_type1 / self_type / nominal_type
+  end
+
+	rule self_type
+		'self' {
+			def value
+				pos = RubyBreaker::Position.get()
+				pos.col = interval.first
+				return RubyBreaker::SelfType.new(pos)
+			end
+		}
+	end
+
+  rule nominal_type
+    [a-z_]+ {
+      def value      
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        begin 
+          mod_name = RubyBreaker::Utilities.camelize(text_value)
+          mod = eval mod_name
+          t = RubyBreaker::NominalType.new(mod,pos)
+        rescue
+          t = RubyBreaker::AnyType.new(pos)
+        end
+        return t # RubyBreaker::NominalType.new(text_value,pos)
+      end
+    }
+  end
+  
+  rule nil_type
+    'nil' {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::NilType.new(pos)
+      end
+    }
+  end
+  
+  rule any_type1
+    '?' {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::AnyType.new(pos)
+      end
+    }
+  end
+  
+  rule meth_name
+		nominal_meth_name / sym_meth_name
+  end
+
+	rule sym_meth_name
+		# Be careful about the order. Remember, it finds a match first
+		'===' / '<=>' / '[]=' / 
+		'==' / '!=' / '<<' / '>>' / '[]' / '**' / '<=' / '>=' / '-@' / '=~' / 
+		'<' / '>' / '&' / '|' / '*' / '/' / '%' / '+' / '-' / '^' 
+	end
+
+	rule nominal_meth_name
+    [a-z_] [a-zA-Z0-9_]* [!?=]?
+	end
+  
+  rule space
+    [\s]+
+  end
+
+end

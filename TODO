@@ -1,0 +1,30 @@
+# Variable-length Argument Type
+
+Currently, the variable-length argument type cannot be auto-documented.
+This can be done by looking at the method arity and initializes the method
+type to have a variable-length argument type for the last argument. 
+
+# Module Methods and Class Methods
+
+RubyBreaker only monitors instance methods at the moment.
+
+# Dynamic Type Check
+
+Although type documentation is the main purpose of RubyBreaker, this
+documentation can be used to enforce correct types at runtime. It is often
+helpful to find type errors earlier on during execution to narrow down the
+root cause of the problem.
+
+# Hybrid of Breakable and Broken
+
+A module or class cannot be both Breakable and Broken. Once it is declared
+to be Broken, it is Broken no matter what. In theory, it is possible to
+selectively auto-document methods that are not yet documented.
+
+# PERMANENT LIMITATIONS
+
+* Block argument cannot be auto-documented. 
+* Manual modification (minimal) of code is required.
+* No parametric polymorphic types are supported. The lack of this type is
+  not a bug but a feature! Polymorphic types are just headaches!
+

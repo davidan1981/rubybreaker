@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+require "optparse"
+
+dir = File.dirname(__FILE__)
+require "#{dir}/../lib/rubybreaker"
+
+module RubyBreaker
+
+  # This method is the main method for running RubyBreaker as a shell
+  # program.
+  def self.main()
+
+    option_parser = OptionParser.new do |opts|
+
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options] in_file[.rb]" 
+
+      opts.on("-f","--io-file FILE","Specify an input/output file") do |f|
+        OPTIONS[:output] = f
+      end
+
+      opts.on("-s","--[no-]stdout","Show output on the screen") do |b|
+        OPTIONS[:stdout] = b
+      end
+
+      opts.on("-a", "--[no-]append", "Append output to the input file") do |b|
+        OPTIONS[:append] = b
+      end
+
+      opts.on("-v","--verbose","Show messages in detail") do
+        OPTIONS[:verbose] = true
+      end
+
+      opts.on("--[no-]rubylib", "Use Core Ruby Library documentation") do |b|
+        OPTIONS[:rubylib] = b
+      end
+
+      opts.on("-h","--help","Show this help text") do 
+        puts opts
+        exit
+      end
+
+    end
+
+    option_parser.parse!
+
+    OPTIONS[:mode] = :bin  # indicate that RubyBreaker is being run as a
+                           # binary (program).
+    
+    puts COPYRIGHT
+    puts
+
+    # There has to be an input file
+    if ARGV.length < 1 then 
+      puts option_parser.banner
+      exit(1)
+    end
+
+    Main.run()
+
+  end
+
+end
+
+RubyBreaker.main()
+
+
+

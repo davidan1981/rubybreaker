@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+# This program creates a stub documentation for Ruby Core Library.
+
+require "prettyprint"
+
+BLACKLIST = [:Config, :Class, :Module]
+
+def get_const(const_name, binding, visited)
+	return false if BLACKLIST.include?(:"#{const_name}")
+	validated = true
+	begin 
+		const = eval(const_name.to_s, binding)
+	rescue
+		validated = false
+	end
+	return nil unless const.kind_of?(Module) && !visited.include?(const)
+	return const
+end
+
+def visit(pp, mod, binding, visited=[])
+	visited << mod
+	keyword = mod.kind_of?(Class) ? "class" : "module"
+	new_binding = eval("#{keyword} #{mod.name}; binding() end", binding)
+  pp.breakable()
+	pp.text("#{keyword} #{mod.name}")
+	pp.group(2) do 
+    pp.breakable(";")
+		pp.text("include RubyBreaker::Broken")
+		inst_meths = mod.instance_methods(false).sort
+		inst_meths.each {|meth|
+      pp.breakable(";")
+			pp.text("typesig(\"#{meth}(?*) -> basic_object\")")
+		}
+		consts = mod.constants.sort
+		consts.each do |const_name|
+			const = get_const(const_name, new_binding, visited)
+			next unless const
+      pp.breakable()
+			visit(pp, const, new_binding, visited)
+		end
+	end
+	pp.breakable()
+	pp.text("end # of #{mod.name}")
+	pp.breakable(";")
+end
+
+def visit_toplevel(pp,visited=[])
+	visited << Object
+	Object.constants.sort.each do |const_name|
+	  const = get_const(const_name, TOPLEVEL_BINDING, visited)
+		next unless const
+    pp.breakable()
+		visit(pp, const, TOPLEVEL_BINDING, visited)
+	end
+end
+
+str = ""
+pp = PrettyPrint.new(str)
+pp.text("# This file is auto-generated.")
+pp.breakable()
+visit_toplevel(pp)
+pp.flush()
+puts str.strip
+
