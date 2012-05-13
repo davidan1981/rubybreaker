@@ -12,8 +12,12 @@ module RubyBreaker
 
     OUTPUT = ""
 
+    def self.debug_mode?()
+      return defined?(RubyBreaker::OPTIONS) && RubyBreaker::OPTIONS[:debug]
+    end
+
     def self.msg(text,context=nil)
-      return unless RubyBreaker::OPTIONS[:debug]
+      return unless self.debug_mode?
       pp = PrettyPrint.new(OUTPUT)
       msg = "[DEBUG] #{text}"
       if context
@@ -28,18 +32,18 @@ module RubyBreaker
     end
 
     def self.short_msg(text)
-      return unless RubyBreaker::OPTIONS[:debug]
+      return unless self.debug_mode?
       msg = "[DEBUG] #{text}"
       print msg
     end
 
     def self.token(msg)
-      return unless RubyBreaker::OPTIONS[:debug]
+      return unless self.debug_mode?
       print msg
     end
 
     def self.feed_line()
-      return unless RubyBreaker::OPTIONS[:debug]
+      return unless self.debug_mode?
       puts ""
     end
 

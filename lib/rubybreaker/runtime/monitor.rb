@@ -161,6 +161,8 @@ module RubyBreaker
 
         meth_info.ret = retval
         mm.monitor_after_method(obj, meth_info)
+        retval = meth_info.ret  # Return value may have been altered by the
+                                # after_method monitoring code
 
         # things are done in this context. pop it off.
         CONTEXT.pop()

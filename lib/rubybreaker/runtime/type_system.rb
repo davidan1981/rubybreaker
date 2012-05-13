@@ -220,6 +220,14 @@ module RubyBreaker
         # Compute the least upper bound
         lub(obj, inst_meths,meth_name,retval,*args,&blk)
 
+        if obj == retval  
+          # It is possible that the method receiver is a wrapped object if
+          # it is an argument to a method in the current call stack. So this
+          # check is to return the wrapped object and not the stripped off
+          # version. (Remember, == is overridden for the wrapped object.)
+          meth_info.ret = obj
+        end
+
       end
 
     end
