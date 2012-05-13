@@ -28,4 +28,14 @@ module RubyBreaker
 
   end
 
+  # http://mentalized.net/journal/2010/04/02/suppress_warnings_from_ruby/
+  module Kernel
+    def suppress_warning
+      original_verbosity = $VERBOSE
+      $VERBOSE = nil
+      result = yield
+      $VERBOSE = original_verbosity
+      return result
+    end
+  end
 end

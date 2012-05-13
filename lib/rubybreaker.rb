@@ -24,21 +24,10 @@ module RubyBreaker
     :rubylib => true,              # include core ruby library documentation?
   }
 
-  # Broken takes higher precedence than Breakable. Once a module is
-  # "declared" to be Broken, it cannot be Breakable. 
-  #
-  # TODO: In future, there will be a module to support both states.
-
-  # This array lists modules/classes that will be monitored.
-  BREAKABLE = []
-
   # This array lists modules/classes that are actually instrumented with a
   # monitor.
   INSTALLED = []
   
-  # This array lists "broken" classes--i.e., with type signatures
-  BROKEN = []
-
   # This array lists monitored modules/classes that are outputed.
   DOCUMENTED = []
 
@@ -170,7 +159,7 @@ module RubyBreaker
 
       if OPTIONS[:rubylib]
         # Load the core library type documentation
-        eval("require \"#{File.dirname(__FILE__)}/rubybreaker/rubylib\"", TOPLEVEL_BINDING)
+        eval("require_relative \"#{File.dirname(__FILE__)}/rubybreaker/rubylib\"", TOPLEVEL_BINDING)
       end
 
       # Read the input file first (as it might contain type documentation

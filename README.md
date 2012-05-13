@@ -296,7 +296,7 @@ it should be only used for an object that requires an arbitrary yet most
 specific type--that is, `?` is a subtype of any other type, but any
 other type is not a subtype of `?`. This becomes a bit complicated for
 method or block argument types because of their contra-variance
-characteristic. Please kefer to the section *Subtyping*.
+characteristic. Please refer to the section *Subtyping*.
 
 ### Block Type
 

@@ -41,6 +41,9 @@ module RubyBreaker
         :"send", :"__send__", :"instance_eval", 
         :"instance_exec"].each do |meth|
 
+        orig_verbose = $VERBOSE
+        $VERBOSE = nil
+
         eval <<-EOS
 
       def #{meth}(*args,&blk)
@@ -48,6 +51,8 @@ module RubyBreaker
       end
 
         EOS
+
+        $VERBOSE = orig_verbose
 
       end
       
