@@ -13,7 +13,11 @@ rescue LoadError => e
 end
 
 # Use rake/clean to remove generated files
-CLEAN << FileList["html", "webpage/index.html", "lib/rubybreaker/type/type_grammar.rb"]
+CLEAN.concat(FileList["html", 
+                      "rubybreaker-*.gem",
+                      "webpage/index.html", 
+                      "lib/rubybreaker/type/type_grammar.rb"
+                     ])
 
 # If no task specified, do test
 task :default => [:test]

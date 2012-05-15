@@ -1,4 +1,5 @@
 require "rake"
+require "rubygems/version"
 
 Gem::Specification.new do |spec|
   spec.date = Time.now
@@ -17,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.license = "BSD"
   spec.name = "rubybreaker"
   spec.summary = "Dynamic Type Documentation Tool for Ruby"
-  spec.version = "0.0.1"
+  spec.version = Gem::Version.create(File.read("VERSION"))
   spec.require_path = "lib"
   spec.homepage = "https://github.com/rockalizer/rubybreaker"
 end
