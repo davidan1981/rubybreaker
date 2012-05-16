@@ -11,14 +11,12 @@ module RubyBreaker
     # by Pluggable and Monitor
     class MethodInfo
 
-      attr_accessor :meta 
       attr_accessor :meth_name
       attr_accessor :args
       attr_accessor :blk
       attr_accessor :ret
 
-      def initialize(meta, meth_name, args, blk, ret)
-        @meta = meta
+      def initialize(meth_name, args, blk, ret)
         @meth_name = meth_name
         @args = args
         @blk = blk

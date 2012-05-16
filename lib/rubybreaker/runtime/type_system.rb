@@ -5,6 +5,7 @@
 # this type system is to give a readable type signature to every method in
 # designated modules and classes.
 
+require_relative "util"
 require_relative "object_wrapper"
 require_relative "type_placeholder"
 require_relative "../type"
@@ -104,15 +105,15 @@ module RubyBreaker
       # the method type to a method list type.
       #
       # obj:: the receive of the method call
-      # inst_meths:: a hash object that maps method names to method types 
+      # meth_type_map:: a hash object that maps method names to method types 
       # meth_name:: the name of the method being invoked
       # retval:: the return value of the original method call
       # args:: the arguments
       # blk:: the block argument
       #
-      def lub(obj, inst_meths, meth_name, retval, *args, &blk)
+      def lub(obj, meth_type_map, meth_name, retval, *args, &blk)
         
-        exist_meth_type = inst_meths[meth_name.to_sym] 
+        exist_meth_type = meth_type_map[meth_name.to_sym] 
         
         # Construct the newly observed method type first
         new_meth_type = MethodType.new(meth_name)
@@ -147,7 +148,7 @@ module RubyBreaker
             # Could not resolve the types, so promote the method type to a
             # method list type
             exist_meth_type = MethodListType.new([exist_meth_type])
-            inst_meths[meth_name.to_sym] = exist_meth_type
+            meth_type_map[meth_name.to_sym] = exist_meth_type
           end
         end 
         if !resolved
@@ -161,8 +162,10 @@ module RubyBreaker
       # each argument with the object wrapper.
       def before_method(obj, meth_info)
 
-        mod = obj.class
-        inst_meths = Breakable::TYPE_PLACEHOLDER_MAP[mod].inst_meths
+        is_obj_mod = (obj.class == Class or obj.class == Module)
+        mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
+
+        meth_type_map = Breakable::TYPE_PLACEHOLDER_MAP[mod].meth_type_map
 
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
@@ -181,7 +184,7 @@ module RubyBreaker
 
         Debug.msg("In module monitor_before #{meth_name}")
         
-        meth_type = inst_meths[meth_name]
+        meth_type = meth_type_map[meth_name]
         
         if meth_type
           # This means the method type has been created previously.
@@ -196,7 +199,7 @@ module RubyBreaker
           arg_types = args.map {|arg| nil }
           blk_type = blk ? BlockType.new(Array.new(blk.arity), nil, nil) : nil
           meth_type = MethodType.new(meth_name, arg_types, blk_type, nil)
-          inst_meths[meth_name] = meth_type
+          meth_type_map[meth_name] = meth_type
         end
 
         meth_info.args = args
@@ -206,7 +209,10 @@ module RubyBreaker
       # This method occurs after every "monitored" method call. It updates
       # the type information.
       def after_method(obj, meth_info)
-        mod = obj.class
+
+        is_obj_mod = (obj.class == Class or obj.class == Module)
+        mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
+
         # Take things out
         meth_name = meth_info.meth_name
         retval = meth_info.ret
@@ -215,10 +221,10 @@ module RubyBreaker
 
         Debug.msg("In module monitor_after #{meth_name}")
 
-        inst_meths = Breakable::TYPE_PLACEHOLDER_MAP[mod].inst_meths
+        meth_type_map = Breakable::TYPE_PLACEHOLDER_MAP[mod].meth_type_map
 
         # Compute the least upper bound
-        lub(obj, inst_meths,meth_name,retval,*args,&blk)
+        lub(obj, meth_type_map,meth_name,retval,*args,&blk)
 
         if obj == retval  
           # It is possible that the method receiver is a wrapped object if

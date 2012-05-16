@@ -5,6 +5,7 @@
 # functions for later use (after runtime).
 
 dir = File.dirname(__FILE__) 
+require_relative "util"
 require_relative "type_placeholder"
 require_relative "../context"
 require_relative "../debug"
@@ -129,21 +130,16 @@ module RubyBreaker
         end
 
         is_obj_mod = (obj.class == Class or obj.class == Module)
-
-        # from here, do more work for module monitoring
-        mod = obj.class 
-
-        # TODO:
-        meta = false
+        mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
         # mm = get_module_monitor(mod) unless is_obj_mod
-        mm = Breakable::MONITOR_MAP[mod] if !is_obj_mod
+        mm = Breakable::MONITOR_MAP[mod] 
 
         # There is something wrong if there isn't a module monitor
         # associated with the call.
-        # raise Exception if mm == nil || !mm.inst_meths.include?(meth_name)
+        # raise Exception if mm == nil || !mm.meth_type_map.include?(meth_name)
 
-        meth_info = MethodInfo.new(meta, meth_name, args, blk, nil)
+        meth_info = MethodInfo.new(meth_name, args, blk, nil)
 
         mm.monitor_before_method(obj, meth_info)
 
@@ -198,7 +194,7 @@ module RubyBreaker
 
       # renames the method in essence; this method also "installs" the
       # module monitor for the class
-      def self.rename_meth(recv,meth_name)
+      def self.rename_meth(recv, meth_name)
         alt_meth_name = MonitorUtils.get_alt_meth_name(meth_name)
         recv.module_eval("alias :\"#{alt_meth_name}\" :\"#{meth_name}\"")
         Debug.msg("Adding alternate method for #{meth_name}")
@@ -212,15 +208,13 @@ module RubyBreaker
         EOF
       end
 
-      # Installs an module (class) monitor to the object.
-      def self.install_module_monitor(mod,infer=false)
+      # Installs an module (class) monitor to the object. 
+      def self.install_module_monitor(mod)
         Debug.short_msg("Installing module monitor for #{mod}")
-        if infer
-          Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
-          Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
-        end
-        inst_meths = []
-        meths = mod.instance_methods(false)
+        Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
+        Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
+        meth_type_map = []
+        meths = mod.instance_methods(false)  
         meths.each do |m| 
           self.rename_meth(mod,m) 
         end

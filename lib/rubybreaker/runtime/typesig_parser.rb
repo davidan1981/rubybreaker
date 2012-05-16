@@ -21,6 +21,7 @@ module RubyBreaker
       # lines in the signature, it will look at each line and construct a
       # MethodListType to represent the intersection type.
       def self.parse(str)
+
         meth_types = []
         
         # Get caller information and set the global location 

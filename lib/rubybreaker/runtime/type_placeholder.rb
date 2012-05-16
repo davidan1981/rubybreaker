@@ -10,14 +10,10 @@ module RubyBreaker
     class TypePlaceholder
 
       # This accessor sets/gets instance method map
-      attr_accessor :inst_meths  # method name => method type
-
-      # This accessor sets/gets module method map (XXX: not used)
-      attr_accessor :mod_meths
+      attr_accessor :meth_type_map  # method name => method type
 
       def initialize()
-        @inst_meths = {}
-        @mod_meths = {}
+        @meth_type_map = {}
       end
 
     end

@@ -166,11 +166,33 @@ signature `bar(fixnum[to_s]) -> string`, which means it takes an object that
 has `Fixnum`'s `to_s` method and returns a string. More detail on the type
 annotation language will be explained in later section.
 
-Currently, both `Breakable` and `Broken` only support instance methods.
-Furthermore, class and module methods can neither be monitored nor used for
-analysis. It is important to keep in mind that `Broken` module always wins.
-In other words, if a module is declared as both `Broken` and `Breakable`, it
-is treated as `Broken`.
+It is possible to include either `Breakable` or `Broken` in an eigen-class
+to document class methods. To make this easier, RubyBreaker will
+automatically support auto-documentation and manual documentation of class
+methods if the original module is declared as `Breakable` or `Broken`,
+respectively--that is, up to immediate eigen class level of a "nominal"
+module.  The following example shows how class methods can be
+auto-documented and manually documented, respectively.
+
+    require "rubybreaker"
+    class A
+      include RubyBreaker::Breakable
+      class << self
+        def foo(x); x.to_s end
+      end
+    end
+    class B
+      include RubyBreaker::Broken
+      class << self
+        typesig("foo(fixnum[to_s]) -> string")
+        def foo(x); x.to_s end
+      end
+    end
+
+Keep in mind that `Broken` module always wins against `Breakable`.  In other
+words, if a module is declared as both `Broken` and `Breakable`, it is
+treated as `Broken`. Future versions of RubyBreaker will support a hybrid of
+the two modules, but it remains as a limitation in the current version.
 
 ### Program Entry Point
 
