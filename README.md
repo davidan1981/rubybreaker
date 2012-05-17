@@ -18,6 +18,11 @@ document their code more rigorously and effectively.  Currently, manual
 modification of the user program is required to run RubyBreaker, but this is
 kept minimal. 
 
+To contribute to the project, visit RubyBreaker's
+[GitHub page](http://github.com/rockalizer/rubybreaker) and 
+[RubyGems page](http://rubygems.org/gems/rubybreaker). RubyBreaker RDoc can
+be found in [here](rdoc/index.html).
+
 ## Limitations
 
 * It only works on toy Ruby programs so far :)
@@ -390,25 +395,34 @@ subsequent "promotions").
 
 ## Type System
 
-RubyBreaker comes with its own type system that is used to document type
-information. This section describes how RubyBreaker determines which type(s)
-to document. *More documentation coming soon...*
+RubyBreaker comes with its own type system to auto-document the type
+information. Each method in a `Breakable` module is dynamically instrumented
+to be monitored during runtime. This monitoring code observes the types of
+the arguments, block, and return value of each method. Once this information
+is gathered, RubyBreaker will compare it to the information gathered so far.
+If these two types are "compatiable", RubyBreaker will choose more general
+type of the two. Otherwise, RubyBreaker will use the method list type to
+accommodate two "incompatible" types.
 
-### Subtyping
+### Subtyping and Subclassing
 
-*Documentation coming soon...*
-
-### Subtyping vs. Subclassing
-
-*Documentation coming soon...*
+RubyBreaker uses subtyping to choose one from the two "compatible" types.
+Two types are "compatible" if one is subtype of another. This means that the
+_subtype_ can be represented using the _supertype_ instead. This is why
+RubyBrekaer chooses the latter to document both types. RubyBreaker relies on
+subclassing of Ruby to determine a subtyping relationship between two types.
+For example, `Fixnum` is considered to be subtype of `Numeric` since the
+former is subclass of the latter. (Strictly speaking, `Fixnum` is not really
+subtype of `Numeric` because some methods are overriden in `Fixnum` with
+method types that are not subtype of the counterparts in `Numeric`. But,
+RubyBreaker is lenient and considers them compatible--that is, `Numeric` can
+represent any `Fixnum`.
 
 ### Pluggable Type System (Advanced)
 
 Yes, RubyBreaker was designed with the replaceable type system in mind. In
 other words, anyone can write his own type system and plug it into
-RubyBreaker.
-
-*Documentation coming soon...*
+RubyBreaker. *Technical documentation coming soon...*
 
 * * *
 

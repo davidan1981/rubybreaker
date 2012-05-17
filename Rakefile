@@ -13,7 +13,7 @@ rescue LoadError => e
 end
 
 # Use rake/clean to remove generated files
-CLEAN.concat(FileList["html", 
+CLEAN.concat(FileList["webpage/rdoc", 
                       "rubybreaker-*.gem",
                       "webpage/index.html", 
                       "lib/rubybreaker/type/type_grammar.rb"
@@ -32,6 +32,7 @@ task :gem do |t|
 end
 
 Rake::RDocTask.new do |rd|
+  rd.rdoc_dir = "#{File.dirname(__FILE__)}/webpage/rdoc"
   rd.rdoc_files.include("lib/**/*.rb")
   rd.rdoc_files.exclude("lib/rubybreaker/rubylib/*.rb", "lib/rubybreaker/type/type_grammar.rb")
 end
