@@ -34,9 +34,10 @@ module RubyBreaker
       end
 
       #--
-      # The following code will generate "serious problem" warning. But it's
-      # ok. This meta programming code re-defines BasicObject's methods to
-      # redirect to the actual object.
+      # The following code generates the "serious problem" warning which is
+      # suppressed by the hack using $VERBOSE. This is ok.  This meta
+      # programming code block re-defines BasicObject's methods to redirect
+      # to the actual object.
       [:"!", :"!=", :"==", :"equal?", :"eql?", :"__id__", :"object_id",
         :"send", :"__send__", :"instance_eval", 
         :"instance_exec"].each do |meth|
