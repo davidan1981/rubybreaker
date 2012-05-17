@@ -331,23 +331,23 @@ module RubyBreaker
       return is_subtype
     end
     
-		# Self type works exactly like nominal type except that, if RHS is a
-		# self type, then only self type is allowed in LHS.
-		#
-		# For example, consider you are inside Fixnum
-		#
-		#   self <: Fixnum
-		#   self <: Numeric
-		#   self <: Object
-		#   self <: self
-		#
-		#   but,
-		#
-		#   Fixnum !<: self
-		#
-		def self.self_subtype_rel?(lhs,rhs)
-			self.nominal_subtype_rel?(lhs,rhs)
-		end
+    # Self type works exactly like nominal type except that, if RHS is a
+    # self type, then only self type is allowed in LHS.
+    #
+    # For example, consider you are inside Fixnum
+    #
+    #   self <: Fixnum
+    #   self <: Numeric
+    #   self <: Object
+    #   self <: self
+    #
+    #   but,
+    #
+    #   Fixnum !<: self
+    #
+    def self.self_subtype_rel?(lhs,rhs)
+      self.nominal_subtype_rel?(lhs,rhs)
+    end
 
     # This method checks the subtype relation when LHS is a nominal type.
     # There are several cases to consider:
@@ -367,8 +367,8 @@ module RubyBreaker
     def self.nominal_subtype_rel?(lhs,rhs)
       return false unless lhs.kind_of?(NominalType) # Self type is a nominal type
       if rhs.instance_of?(SelfType)
-				is_subtype = lhs.instance_of?(SelfType)
-			elsif rhs.instance_of?(NominalType) # don't include self type
+        is_subtype = lhs.instance_of?(SelfType)
+      elsif rhs.instance_of?(NominalType) # don't include self type
         is_subtype = RubyTypeUtils.subclass_rel?(lhs.mod, rhs.mod)
       elsif rhs.instance_of?(FusionType)
         # If RHS is a superclass or included module then true
@@ -444,8 +444,8 @@ module RubyBreaker
         is_subtype = rhs.instance_of?(NilType)
       elsif lhs.instance_of?(AnyType)
         is_subtype = true 
-			elsif lhs.instance_of?(SelfType)
-				is_subtype = self.self_subtype_rel?(lhs,rhs)
+      elsif lhs.instance_of?(SelfType)
+        is_subtype = self.self_subtype_rel?(lhs,rhs)
       elsif lhs.instance_of?(NominalType)
         is_subtype = self.nominal_subtype_rel?(lhs,rhs)
       elsif lhs.instance_of?(FusionType)

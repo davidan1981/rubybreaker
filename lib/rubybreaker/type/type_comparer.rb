@@ -53,7 +53,7 @@ module RubyBreaker
       return is_equal
     end
 
-		# This method determines if the type exists in the given type list.
+    # This method determines if the type exists in the given type list.
     def self.type_in_types?(t, types)
       exist = false
       types.each do |t2|
@@ -67,8 +67,8 @@ module RubyBreaker
     
     # This method compares two OR or MethodListType. The order of inner
     # types do not matter.
-		#
-		# XXX: Should the order not matter really?
+    #
+    # XXX: Should the order not matter really?
     def self.or_compare(lhs,rhs)
       is_equal = false
       if lhs.class == rhs.class && lhs.types.size == rhs.types.size
@@ -83,7 +83,7 @@ module RubyBreaker
       return is_equal
     end
 
-		# This method compares a method list to another method list.
+    # This method compares a method list to another method list.
     def self.meth_list_compare(lhs, rhs)
       return self.or_compare(lhs, rhs)
     end
@@ -99,8 +99,8 @@ module RubyBreaker
         is_equal = false
       elsif lhs.instance_of?(NominalType)
         is_equal = (lhs.mod == rhs.mod)
-			elsif lhs.instance_of?(SelfType)
-				is_equal = rhs.instance_of?(SelfType)
+      elsif lhs.instance_of?(SelfType)
+        is_equal = rhs.instance_of?(SelfType)
       elsif lhs.instance_of?(DuckType)
         is_equal = duck_compare(lhs,rhs)
       elsif lhs.instance_of?(FusionType)
@@ -120,11 +120,11 @@ module RubyBreaker
       elsif lhs.instance_of?(OrType)
         is_equal = self.or_compare(lhs,rhs)
       elsif lhs.instance_of?(VarLengthType)
-				is_equal = rhs.instance_of?(VarLengthType) && 
-					         self.compare(lhs.type, rhs.type)
+        is_equal = rhs.instance_of?(VarLengthType) && 
+                   self.compare(lhs.type, rhs.type)
       elsif lhs.instance_of?(OptionalType)
-				is_equal = rhs.instance_of?(OptionalType) &&
-									 self.compare(lhs.type, rhs.type)
+        is_equal = rhs.instance_of?(OptionalType) &&
+                   self.compare(lhs.type, rhs.type)
       else
         is_equal = lhs.class == rhs.class
       end

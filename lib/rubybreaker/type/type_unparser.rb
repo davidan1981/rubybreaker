@@ -41,8 +41,8 @@ module RubyBreaker
         tokens = tname.split("/")        
         tname = tokens.last if tokens.size > 1
         pp.text(tname)
-			elsif t.instance_of?(SelfType)
-				pp.text("self")
+      elsif t.instance_of?(SelfType)
+        pp.text("self")
       elsif t.instance_of?(DuckType)
         unparse_pp_object_type(pp,t)
       elsif t.instance_of?(FusionType)

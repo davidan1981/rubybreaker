@@ -17,7 +17,7 @@ module RubyBreaker
       word
     end
     
-		# File activesupport/lib/active_support/inflector/methods.rb
+    # File activesupport/lib/active_support/inflector/methods.rb
     def self.camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
       if first_letter_in_uppercase
         lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }

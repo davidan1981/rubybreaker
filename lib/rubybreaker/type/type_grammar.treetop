@@ -20,8 +20,8 @@ grammar TypeGrammar
         ret = ret_type.value
         pos = RubyBreaker::Position.get()
         pos.col = meth_name.interval.first
-		    return RubyBreaker::MethodType.new(mname,args,blk,ret,pos)
-		  end
+        return RubyBreaker::MethodType.new(mname,args,blk,ret,pos)
+      end
     }
   end
   
@@ -216,15 +216,15 @@ grammar TypeGrammar
     nil_type / any_type1 / self_type / nominal_type
   end
 
-	rule self_type
-		'self' {
-			def value
-				pos = RubyBreaker::Position.get()
-				pos.col = interval.first
-				return RubyBreaker::SelfType.new(pos)
-			end
-		}
-	end
+  rule self_type
+    'self' {
+      def value
+        pos = RubyBreaker::Position.get()
+        pos.col = interval.first
+        return RubyBreaker::SelfType.new(pos)
+      end
+    }
+  end
 
   rule nominal_type
     [a-z_]+ {
@@ -264,19 +264,19 @@ grammar TypeGrammar
   end
   
   rule meth_name
-		nominal_meth_name / sym_meth_name
+    nominal_meth_name / sym_meth_name
   end
 
-	rule sym_meth_name
-		# Be careful about the order. Remember, it finds a match first
-		'===' / '<=>' / '[]=' / 
-		'==' / '!=' / '<<' / '>>' / '[]' / '**' / '<=' / '>=' / '-@' / '=~' / 
-		'<' / '>' / '&' / '|' / '*' / '/' / '%' / '+' / '-' / '^' 
-	end
+  rule sym_meth_name
+    # Be careful about the order. Remember, it finds a match first
+    '===' / '<=>' / '[]=' / 
+    '==' / '!=' / '<<' / '>>' / '[]' / '**' / '<=' / '>=' / '-@' / '=~' / 
+    '<' / '>' / '&' / '|' / '*' / '/' / '%' / '+' / '-' / '^' 
+  end
 
-	rule nominal_meth_name
+  rule nominal_meth_name
     [a-z_] [a-zA-Z0-9_]* [!?=]?
-	end
+  end
   
   rule space
     [\s]+
