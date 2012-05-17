@@ -22,10 +22,10 @@ def visit(pp, mod, binding, visited=[])
   keyword = mod.kind_of?(Class) ? "class" : "module"
   new_binding = eval("#{keyword} #{mod.name}; binding() end", binding)
   pp.breakable()
-  pp.text("#{keyword} #{mod.name}")
+  pp.text("#{keyword} #{mod.name} #:nodoc:", 80)
   pp.group(2) do 
     pp.breakable(";")
-    pp.text("include RubyBreaker::Broken")
+    pp.text("include RubyBreaker::Broken", 80)
     inst_meths = mod.instance_methods(false).sort
     inst_meths.each {|meth|
       pp.breakable(";")
@@ -40,8 +40,7 @@ def visit(pp, mod, binding, visited=[])
     end
   end
   pp.breakable()
-  pp.text("end # of #{mod.name}")
-  pp.breakable(";")
+  pp.text("end # of #{mod.name}", 80)
 end
 
 def visit_toplevel(pp,visited=[])

@@ -211,6 +211,24 @@ class GrammarTest < Test::Unit::TestCase
     assert_equal("foo() -> nil", str)
   end
 
+  def test_multi_line_1
+    type = @parser.parse("foo(fixnum[to_s,to_i]) -> 
+                          fixnum").value
+    str = TypeUnparser.unparse(type)
+    #puts str
+    assert_equal("foo(fixnum[to_i, to_s]) -> fixnum",str)    
+  end
+
+  def test_multi_line_2
+    type = @parser.parse("foo(fixnum[to_s,
+                                     to_i]) 
+                          -> 
+                          fixnum").value
+    str = TypeUnparser.unparse(type)
+    #puts str
+    assert_equal("foo(fixnum[to_i, to_s]) -> fixnum",str)    
+  end
+
   def test_parse_fail_no_methname
     type = @parser.parse("() -> nil")
     assert_equal(nil, type, "Type signature without a method name")

@@ -149,7 +149,7 @@ module RubyBreaker
       pp.flush
 
       # First, display the result on the stdout if set
-      puts str if OPTIONS[:stdout]
+      print str if OPTIONS[:stdout]
 
       # If this was a library mode run, exit now. 
       return if OPTIONS[:mode] == :lib
