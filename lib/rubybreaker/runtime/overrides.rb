@@ -5,6 +5,9 @@
 # from a wrapped object, this issue is resolved by overriding the comparison
 # operators, but going from a non-wrapped object, the override has to
 # happen on the non-wrapped side. This file is for those overrides.
+#
+# XXX: THIS FILE NEEDS A LOT OF WORK!!! 
+#
 
 require_relative "object_wrapper"
 
@@ -16,6 +19,36 @@ module RubyBreaker
     # indicate overridden methods.
     OVERRIDE_PREFIX = "__rubybreaker"
 
+  end
+
+end
+
+# TODO: More IO related stuff need to be overriden!
+[Kernel, IO].each do |mod|
+
+  [:"puts", :"putc", :"printf", :print].each do |meth_name|
+
+    mod.module_eval <<-EOS
+
+    alias :"#{RubyBreaker::Runtime::OVERRIDE_PREFIX}_#{mod.object_id}_#{meth_name}" :"#{meth_name}"
+
+    EOS
+
+    mod.module_eval <<-EOS
+
+    def #{meth_name}(*args)
+      args = args.map do |arg|
+        if arg.respond_to?(RubyBreaker::Runtime::WRAPPED_INDICATOR)
+          arg.__rubybreaker_obj
+        else
+          arg
+        end
+      end
+      send(:"#{RubyBreaker::Runtime::OVERRIDE_PREFIX}_#{mod.object_id}_#{meth_name}",*args)
+    end
+
+    EOS
+  
   end
 
 end

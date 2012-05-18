@@ -11,6 +11,16 @@ A module or class cannot be both Breakable and Broken. Once it is declared
 to be Broken, it is Broken no matter what. In theory, it is possible to
 selectively auto-document methods that are not yet documented.
 
+# RDoc Documentation
+
+The output of RubyBreaker is an executable Ruby code (for the convenience of
+the author). But, for most Ruby programmers, this documentation may be more
+useful if the output was somehow incorporated with the RDoc output.
+
+# Ruby on Rails Support
+
+Duh...
+
 # PERMANENT LIMITATIONS
 
 * Block argument cannot be auto-documented. 
