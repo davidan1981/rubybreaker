@@ -107,10 +107,10 @@ module RubyBreaker
       # Check if this module is a class
       keyword = mod.instance_of?(Class) ? "class" : "module"
       
-      pp.text("#{keyword} #{mod.to_s}")
+      pp.text("#{keyword} #{mod.to_s}", 80)
       pp.nest(2) do 
         pp.breakable("")
-        pp.text("include RubyBreaker::Broken")
+        pp.text("include RubyBreaker::Broken", 80)
 
         # See if there is any class method to show
         eigen = Runtime.eigen_class(mod)
@@ -120,19 +120,19 @@ module RubyBreaker
           eigen_meth_type_map = Inspector.inspect_all(eigen)
           if eigen_meth_type_map.size > 0 
             pp.breakable()
-            pp.text("class << self")
+            pp.text("class << self", 80)
             pp.nest(2) do
               self.pp_methods(pp, eigen_meth_type_map)
             end
             pp.breakable()
-            pp.text("end")
+            pp.text("end", 80)
           end
         end
         self.pp_methods(pp, meth_type_map)
 
       end
       pp.breakable() 
-      pp.text("end")
+      pp.text("end",80)
       pp.breakable()
     end
 
@@ -191,7 +191,7 @@ module RubyBreaker
 
       if OPTIONS[:rubylib]
         # Load the core library type documentation
-        eval("require_relative \"#{File.dirname(__FILE__)}/rubybreaker/rubylib\"", TOPLEVEL_BINDING)
+        eval("require \"rubybreaker/rubylib\"", TOPLEVEL_BINDING)
       end
 
       # Read the input file first (as it might contain type documentation
@@ -199,7 +199,7 @@ module RubyBreaker
       Main.input()
 
       # Finally, require the program file! Let it run! Wheeee!
-      eval "require '#{prog_file}'", TOPLEVEL_BINDING
+      eval("require '#{prog_file}'", TOPLEVEL_BINDING)
 
     end
 

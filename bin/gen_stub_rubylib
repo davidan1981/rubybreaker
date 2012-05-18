@@ -3,7 +3,7 @@
 
 require "prettyprint"
 
-BLACKLIST = [:Config, :Class, :Module]
+BLACKLIST = [:Config, :Class, :Module, :BasicObject]
 
 def get_const(const_name, binding, visited)
   return false if BLACKLIST.include?(:"#{const_name}")

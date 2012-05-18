@@ -23,7 +23,7 @@ class IntegratedMethodMissingTest < Test::Unit::TestCase
     meth_type = Runtime::Inspector.inspect_meth(A, :method_missing)
     str = RubyBreaker::TypeUnparser.unparse(meth_type)
     # puts str
-    assert_equal("method_missing(symbol[to_s], fixnum[to_s], fixnum[to_s]) -> string", str, "A#foo failed.")
+    assert_equal("method_missing(symbol[to_s], fixnum[to_s]*) -> string", str, "A#foo failed.")
   end
   
 end

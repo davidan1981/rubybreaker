@@ -115,16 +115,26 @@ module RubyBreaker
         
         exist_meth_type = meth_type_map[meth_name.to_sym] 
         
+        # Again, find the arity
+        meth_obj = obj.method(MonitorUtils.get_alt_meth_name(meth_name))
+        arity = meth_obj.arity
+
         # Construct the newly observed method type first
-        new_meth_type = MethodType.new(meth_name)
-        args.each {|arg|
+        new_meth_type = MethodType.new(meth_name,[])
+        args.each_with_index do |arg,idx|
           if is_object_wrapped?(arg)
             arg_type = arg.__rubybreaker_type
           else
             arg_type = NominalType.new(arg.class)
           end
+          # Check if the last argument should be a variable length argument
+          if arity < 0 && (idx + 1 == arity.abs)
+            new_meth_type.arg_types << VarLengthType.new(arg_type)
+            break
+          end
           new_meth_type.arg_types << arg_type
-        }
+        end
+
         if (obj == retval)
           # the return value is same as the message receiver. This means the
           # return value has the self type.
@@ -134,7 +144,7 @@ module RubyBreaker
           # Otherwise, construct a nominal type.
           ret_type = NominalType.new(retval.class)
         end
-        new_meth_type.ret_type  = ret_type
+        new_meth_type.ret_type = ret_type
 
         resolved = false
         if exist_meth_type.instance_of?(MethodListType)
@@ -196,8 +206,20 @@ module RubyBreaker
           # No method type has been created for this method yet. Create a
           # blank method type (where each argument type, block type, and
           # return type are all nil).
-          arg_types = args.map {|arg| nil }
-          blk_type = blk ? BlockType.new(Array.new(blk.arity), nil, nil) : nil
+          #
+          # First, use the orignal method's arity to find out # of
+          # arguments. 
+          meth_obj = obj.method(MonitorUtils.get_alt_meth_name(meth_name))
+          arity = meth_obj.arity
+          arg_types = [nil] * meth_obj.arity.abs 
+          if blk
+            # Do the same for the block too if there is one
+            blk_arity = blk.arity
+            blk_arg_types = [nil] * blk_artiy.abs
+            blk_type = BlockType.new(blk_arg_types, nil, nil)
+          else
+            blk_type = nil
+          end
           meth_type = MethodType.new(meth_name, arg_types, blk_type, nil)
           meth_type_map[meth_name] = meth_type
         end

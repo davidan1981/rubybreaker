@@ -264,20 +264,29 @@ grammar TypeGrammar
   end
   
   rule meth_name
-    nominal_meth_name / sym_meth_name
+    deprecated_meth_name / normal_meth_name
   end
 
+  rule deprecated_meth_name
+    '_deprecated_' normal_meth_name 
+  end
+
+  rule normal_meth_name
+    nominal_meth_name / sym_meth_name
+  end
+  
   rule sym_meth_name
     # Be careful about the order. Remember, it finds a match first
     '===' / '<=>' / '[]=' / 
+    '!~' / '+@' /
     '==' / '!=' / '<<' / '>>' / '[]' / '**' / '<=' / '>=' / '-@' / '=~' / 
-    '<' / '>' / '&' / '|' / '*' / '/' / '%' / '+' / '-' / '^' 
+    '<' / '>' / '&' / '|' / '*' / '/' / '%' / '+' / '-' / '^' / '~' 
   end
 
   rule nominal_meth_name
     [a-z_] [a-zA-Z0-9_]* [!?=]?
   end
-  
+
   rule space
     [\s]+
   end

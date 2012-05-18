@@ -12,13 +12,12 @@ Gem::Specification.new do |spec|
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
   spec.files.reject! {|fn| fn.include?("idraw")}
   spec.has_rdoc = true
-  spec.rdoc_options << "-x" << "lib/rubybreaker/rubylib/core.rb" <<
-                       "-x" << "lib/rubybreaker/type/type_grammar.rb" <<
+  spec.rdoc_options << "-x" << "lib/rubybreaker/type/type_grammar.rb" <<
                        "lib" << "LICENSE" 
   spec.license = "BSD"
   spec.name = "rubybreaker"
   spec.summary = "Dynamic Type Documentation Tool for Ruby"
   spec.version = Gem::Version.create(File.read("VERSION"))
   spec.require_path = "lib"
-  spec.homepage = "https://github.com/rockalizer/rubybreaker"
+  spec.homepage = "http://github.com/rockalizer/rubybreaker"
 end

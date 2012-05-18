@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require "optparse"
 
-dir = File.dirname(__FILE__)
-require "#{dir}/../lib/rubybreaker"
+require_relative "../lib/rubybreaker"
 
 module RubyBreaker
 
@@ -62,6 +61,4 @@ module RubyBreaker
 end
 
 RubyBreaker.main()
-
-
 

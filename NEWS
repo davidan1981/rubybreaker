@@ -6,22 +6,43 @@ RubyBreaker now supports class methods.  Auto-documentation of class methods
 is done in the eigen class scope of the target module. For example, the
 consider the following:
 
-  class A
-    include RubyBreaker::Breakable
-    class << self
-      def foo(x); x.to_s end
+    class A
+      include RubyBreaker::Breakable
+      class << self
+        def foo(x); x.to_s end
+      end
     end
-  end
-  RubyBreaker.monitor()
-  A.foo(1)
+    RubyBreaker.monitor()
+    A.foo(1)
 
 When `foo` method is run, RubyBreaker will auto-document the type of the
 method and output as the following:
 
-  class A
-    include RubyBreaker::Broken
-    class << self
-      typesig("foo(fixnum[to_s]) -> string")
+    class A
+      include RubyBreaker::Broken
+      class << self
+        typesig("foo(fixnum[to_s]) -> string")
+      end
     end
-  end
+
+## Variable-Length Argument Type
+
+RubyBreaker can now auto-document variable-length argument types if the last
+argument was declared with `*` prefix. For instance,
+
+    class A
+      include RubyBreaker::Breakable
+      def foo(*args)
+        args[0].to_s
+      end
+    end
+    RubyBreaker.monitor()
+    A.new.foo("1")
+
+Will generate the following output:
+
+    class A
+      include RubyBreaker::Broken
+      typesig("foo(string[to_s]*) -> string")
+    end
 

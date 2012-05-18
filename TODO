@@ -1,9 +1,3 @@
-# Variable-length Argument Type
-
-Currently, the variable-length argument type cannot be auto-documented.
-This can be done by looking at the method arity and initializes the method
-type to have a variable-length argument type for the last argument. 
-
 # Dynamic Type Check
 
 Although type documentation is the main purpose of RubyBreaker, this

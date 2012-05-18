@@ -68,6 +68,22 @@ class UnparserTest < Test::Unit::TestCase
     assert_equal("a*",str2)
   end
 
+  def test_star_duck_type()
+    t1 = DuckType.new([:foo, :bar])
+    t2 = VarLengthType.new(t1)
+    str2 = TypeUnparser.unparse(t2)
+    # puts str1
+    assert_equal("[bar, foo]*",str2)
+  end
+
+  def test_star_fusion_type()
+    t1 = FusionType.new(NominalType.new(A), [:foo, :bar])
+    t2 = VarLengthType.new(t1)
+    str2 = TypeUnparser.unparse(t2)
+    # puts str1
+    assert_equal("a[bar, foo]*",str2)
+  end
+
   def test_star_or_type()
     t1 = NominalType.new(A)
     t2 = NominalType.new(B)

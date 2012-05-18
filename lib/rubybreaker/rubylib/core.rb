@@ -1,12 +1,11 @@
 # This file is auto-generated.
 
-
 class ArgumentError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of ArgumentError
 
 class Array #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("&(?*) -> basic_object")
   typesig("*(?*) -> basic_object")
   typesig("+(?*) -> basic_object")
@@ -97,20 +96,20 @@ class Array #:nodoc:
   typesig("|(?*) -> basic_object")
 end # of Array
 
-class BasicObject #:nodoc:
-  include RubyBreaker::Broken
-  typesig("!(?*) -> basic_object")
-  typesig("!=(?*) -> basic_object")
-  typesig("==(?*) -> basic_object")
-  typesig("__id__(?*) -> basic_object")
-  typesig("__send__(?*) -> basic_object")
-  typesig("equal?(?*) -> basic_object")
-  typesig("instance_eval(?*) -> basic_object")
-  typesig("instance_exec(?*) -> basic_object")
-end # of BasicObject
+# class BasicObject #:nodoc:
+#   include ::RubyBreaker::Broken
+#   typesig("!(?*) -> basic_object")
+#   typesig("!=(?*) -> basic_object")
+#   typesig("==(?*) -> basic_object")
+#   typesig("__id__(?*) -> basic_object")
+#   typesig("__send__(?*) -> basic_object")
+#   typesig("equal?(?*) -> basic_object")
+#   typesig("instance_eval(?*) -> basic_object")
+#   typesig("instance_exec(?*) -> basic_object")
+# end # of BasicObject
 
 class Bignum #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("%(?*) -> basic_object")
   typesig("&(?*) -> basic_object")
   typesig("*(?*) -> basic_object")
@@ -150,14 +149,14 @@ class Bignum #:nodoc:
 end # of Bignum
 
 class Binding #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("clone(?*) -> basic_object")
   typesig("dup(?*) -> basic_object")
   typesig("eval(?*) -> basic_object")
 end # of Binding
 
 module Comparable #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("<(?*) -> basic_object")
   typesig("<=(?*) -> basic_object")
   typesig("==(?*) -> basic_object")
@@ -167,7 +166,7 @@ module Comparable #:nodoc:
 end # of Comparable
 
 class Complex #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("*(?*) -> basic_object")
   typesig("**(?*) -> basic_object")
   typesig("+(?*) -> basic_object")
@@ -208,11 +207,11 @@ class Complex #:nodoc:
 end # of Complex
 
 class Data #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of Data
 
 class Dir #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("close(?*) -> basic_object")
   typesig("each(?*) -> basic_object")
   typesig("inspect(?*) -> basic_object")
@@ -227,11 +226,11 @@ class Dir #:nodoc:
 end # of Dir
 
 class EOFError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of EOFError
 
 class Encoding #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("_dump(?*) -> basic_object")
   typesig("ascii_compatible?(?*) -> basic_object")
   typesig("dummy?(?*) -> basic_object")
@@ -242,11 +241,11 @@ class Encoding #:nodoc:
   typesig("to_s(?*) -> basic_object")
   
   class Encoding::CompatibilityError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Encoding::CompatibilityError
   
   class Encoding::Converter #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("==(?*) -> basic_object")
     typesig("convert(?*) -> basic_object")
     typesig("convpath(?*) -> basic_object")
@@ -264,11 +263,11 @@ class Encoding #:nodoc:
   end # of Encoding::Converter
   
   class Encoding::ConverterNotFoundError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Encoding::ConverterNotFoundError
   
   class Encoding::InvalidByteSequenceError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("destination_encoding(?*) -> basic_object")
     typesig("destination_encoding_name(?*) -> basic_object")
     typesig("error_bytes(?*) -> basic_object")
@@ -279,7 +278,7 @@ class Encoding #:nodoc:
   end # of Encoding::InvalidByteSequenceError
   
   class Encoding::UndefinedConversionError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("destination_encoding(?*) -> basic_object")
     typesig("destination_encoding_name(?*) -> basic_object")
     typesig("error_char(?*) -> basic_object")
@@ -289,11 +288,11 @@ class Encoding #:nodoc:
 end # of Encoding
 
 class EncodingError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of EncodingError
 
 module Enumerable #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("all?(?*) -> basic_object")
   typesig("any?(?*) -> basic_object")
   typesig("chunk(?*) -> basic_object")
@@ -344,7 +343,7 @@ module Enumerable #:nodoc:
 end # of Enumerable
 
 class Enumerator #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("each(?*) -> basic_object")
   typesig("each_with_index(?*) -> basic_object")
   typesig("each_with_object(?*) -> basic_object")
@@ -359,419 +358,419 @@ class Enumerator #:nodoc:
   typesig("with_object(?*) -> basic_object")
   
   class Enumerator::Generator #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("each(?*) -> basic_object")
   end # of Enumerator::Generator
   
   class Enumerator::Yielder #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<<(?*) -> basic_object")
     typesig("yield(?*) -> basic_object")
   end # of Enumerator::Yielder
 end # of Enumerator
 
 module Errno #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   
   class Errno::E2BIG #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::E2BIG
   
   class Errno::EACCES #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EACCES
   
   class Errno::EADDRINUSE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EADDRINUSE
   
   class Errno::EADDRNOTAVAIL #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EADDRNOTAVAIL
   
   class Errno::NOERROR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::NOERROR
   
   class Errno::EAFNOSUPPORT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EAFNOSUPPORT
   
   class Errno::EAGAIN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EAGAIN
   
   class Errno::EALREADY #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EALREADY
   
   class Errno::EAUTH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EAUTH
   
   class Errno::EBADF #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EBADF
   
   class Errno::EBADMSG #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EBADMSG
   
   class Errno::EBADRPC #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EBADRPC
   
   class Errno::EBUSY #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EBUSY
   
   class Errno::ECANCELED #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ECANCELED
   
   class Errno::ECHILD #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ECHILD
   
   class Errno::ECONNABORTED #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ECONNABORTED
   
   class Errno::ECONNREFUSED #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ECONNREFUSED
   
   class Errno::ECONNRESET #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ECONNRESET
   
   class Errno::EDEADLK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EDEADLK
   
   class Errno::EDESTADDRREQ #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EDESTADDRREQ
   
   class Errno::EDOM #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EDOM
   
   class Errno::EDQUOT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EDQUOT
   
   class Errno::EEXIST #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EEXIST
   
   class Errno::EFAULT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EFAULT
   
   class Errno::EFBIG #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EFBIG
   
   class Errno::EFTYPE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EFTYPE
   
   class Errno::EHOSTDOWN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EHOSTDOWN
   
   class Errno::EHOSTUNREACH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EHOSTUNREACH
   
   class Errno::EIDRM #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EIDRM
   
   class Errno::EILSEQ #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EILSEQ
   
   class Errno::EINPROGRESS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EINPROGRESS
   
   class Errno::EINTR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EINTR
   
   class Errno::EINVAL #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EINVAL
   
   class Errno::EIO #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EIO
   
   class Errno::EISCONN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EISCONN
   
   class Errno::EISDIR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EISDIR
   
   class Errno::ELOOP #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ELOOP
   
   class Errno::EMFILE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EMFILE
   
   class Errno::EMLINK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EMLINK
   
   class Errno::EMSGSIZE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EMSGSIZE
   
   class Errno::EMULTIHOP #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EMULTIHOP
   
   class Errno::ENAMETOOLONG #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENAMETOOLONG
   
   class Errno::ENEEDAUTH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENEEDAUTH
   
   class Errno::ENETDOWN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENETDOWN
   
   class Errno::ENETRESET #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENETRESET
   
   class Errno::ENETUNREACH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENETUNREACH
   
   class Errno::ENFILE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENFILE
   
   class Errno::ENOATTR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOATTR
   
   class Errno::ENOBUFS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOBUFS
   
   class Errno::ENODATA #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENODATA
   
   class Errno::ENODEV #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENODEV
   
   class Errno::ENOENT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOENT
   
   class Errno::ENOEXEC #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOEXEC
   
   class Errno::ENOLCK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOLCK
   
   class Errno::ENOLINK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOLINK
   
   class Errno::ENOMEM #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOMEM
   
   class Errno::ENOMSG #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOMSG
   
   class Errno::ENOPROTOOPT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOPROTOOPT
   
   class Errno::ENOSPC #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOSPC
   
   class Errno::ENOSR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOSR
   
   class Errno::ENOSTR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOSTR
   
   class Errno::ENOSYS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOSYS
   
   class Errno::ENOTBLK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTBLK
   
   class Errno::ENOTCONN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTCONN
   
   class Errno::ENOTDIR #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTDIR
   
   class Errno::ENOTEMPTY #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTEMPTY
   
   class Errno::ENOTRECOVERABLE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTRECOVERABLE
   
   class Errno::ENOTSOCK #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTSOCK
   
   class Errno::ENOTSUP #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTSUP
   
   class Errno::ENOTTY #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENOTTY
   
   class Errno::ENXIO #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ENXIO
   
   class Errno::EOPNOTSUPP #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EOPNOTSUPP
   
   class Errno::EOVERFLOW #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EOVERFLOW
   
   class Errno::EOWNERDEAD #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EOWNERDEAD
   
   class Errno::EPERM #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPERM
   
   class Errno::EPFNOSUPPORT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPFNOSUPPORT
   
   class Errno::EPIPE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPIPE
   
   class Errno::EPROCLIM #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROCLIM
   
   class Errno::EPROCUNAVAIL #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROCUNAVAIL
   
   class Errno::EPROGMISMATCH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROGMISMATCH
   
   class Errno::EPROGUNAVAIL #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROGUNAVAIL
   
   class Errno::EPROTO #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROTO
   
   class Errno::EPROTONOSUPPORT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROTONOSUPPORT
   
   class Errno::EPROTOTYPE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EPROTOTYPE
   
   class Errno::ERANGE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ERANGE
   
   class Errno::EREMOTE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EREMOTE
   
   class Errno::EROFS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EROFS
   
   class Errno::ERPCMISMATCH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ERPCMISMATCH
   
   class Errno::ESHUTDOWN #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ESHUTDOWN
   
   class Errno::ESOCKTNOSUPPORT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ESOCKTNOSUPPORT
   
   class Errno::ESPIPE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ESPIPE
   
   class Errno::ESRCH #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ESRCH
   
   class Errno::ESTALE #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ESTALE
   
   class Errno::ETIME #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ETIME
   
   class Errno::ETIMEDOUT #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ETIMEDOUT
   
   class Errno::ETOOMANYREFS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ETOOMANYREFS
   
   class Errno::ETXTBSY #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::ETXTBSY
   
   class Errno::EUSERS #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EUSERS
   
   class Errno::EXDEV #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Errno::EXDEV
 end # of Errno
 
 class Exception #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("backtrace(?*) -> basic_object")
   typesig("exception(?*) -> basic_object")
@@ -782,7 +781,7 @@ class Exception #:nodoc:
 end # of Exception
 
 class FalseClass #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("&(?*) -> basic_object")
   typesig("^(?*) -> basic_object")
   typesig("to_s(?*) -> basic_object")
@@ -790,16 +789,16 @@ class FalseClass #:nodoc:
 end # of FalseClass
 
 class Fiber #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("resume(?*) -> basic_object")
 end # of Fiber
 
 class FiberError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of FiberError
 
 class File #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("atime(?*) -> basic_object")
   typesig("chmod(?*) -> basic_object")
   typesig("chown(?*) -> basic_object")
@@ -813,11 +812,11 @@ class File #:nodoc:
   typesig("truncate(?*) -> basic_object")
   
   module File::Constants #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of File::Constants
   
   class File::Stat #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<=>(?*) -> basic_object")
     typesig("atime(?*) -> basic_object")
     typesig("blksize(?*) -> basic_object")
@@ -863,20 +862,20 @@ class File #:nodoc:
   end # of File::Stat
   
   module IO::WaitReadable #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of IO::WaitReadable
   
   module IO::WaitWritable #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of IO::WaitWritable
 end # of File
 
 module FileTest #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of FileTest
 
 class Fixnum #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("%(?*) -> basic_object")
   typesig("&(?*) -> basic_object")
   typesig("*(?*) -> basic_object")
@@ -914,7 +913,7 @@ class Fixnum #:nodoc:
 end # of Fixnum
 
 class Float #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("%(?*) -> basic_object")
   typesig("*(?*) -> basic_object")
   typesig("**(?*) -> basic_object")
@@ -960,29 +959,29 @@ class Float #:nodoc:
 end # of Float
 
 class FloatDomainError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of FloatDomainError
 
 module GC #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("garbage_collect(?*) -> basic_object")
   
   module GC::Profiler #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of GC::Profiler
 end # of GC
 
 module Gem #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   
   class Gem::Builder #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("build(?*) -> basic_object")
     typesig("success(?*) -> basic_object")
   end # of Gem::Builder
   
   class Gem::SourceIndex #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("==(?*) -> basic_object")
     typesig("_deprecated_==(?*) -> basic_object")
     typesig("_deprecated_add_spec(?*) -> basic_object")
@@ -1035,11 +1034,11 @@ module Gem #:nodoc:
   end # of Gem::SourceIndex
   
   class Gem::CommandLineError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::CommandLineError
   
   class Gem::ConfigFile #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("==(?*) -> basic_object")
     typesig("[](?*) -> basic_object")
     typesig("[]=(?*) -> basic_object")
@@ -1076,7 +1075,7 @@ module Gem #:nodoc:
   end # of Gem::ConfigFile
   
   class Gem::Dependency #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<=>(?*) -> basic_object")
     typesig("==(?*) -> basic_object")
     typesig("=~(?*) -> basic_object")
@@ -1101,11 +1100,11 @@ module Gem #:nodoc:
   end # of Gem::Dependency
   
   class Gem::DependencyError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::DependencyError
   
   class Gem::DependencyList #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("add(?*) -> basic_object")
     typesig("clear(?*) -> basic_object")
     typesig("dependency_order(?*) -> basic_object")
@@ -1125,55 +1124,55 @@ module Gem #:nodoc:
     typesig("why_not_ok?(?*) -> basic_object")
     
     class TSort::Cyclic #:nodoc:
-      include RubyBreaker::Broken
+      include ::RubyBreaker::Broken
     end # of TSort::Cyclic
   end # of Gem::DependencyList
   
   class Gem::DependencyRemovalException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::DependencyRemovalException
   
   module Gem::Deprecate #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::Deprecate
   
   class Gem::DocumentError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::DocumentError
   
   class Gem::EndOfYAMLException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::EndOfYAMLException
   
   class Gem::Exception #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::Exception
   
   class Gem::FilePermissionError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::FilePermissionError
   
   class Gem::FormatException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("file_path(?*) -> basic_object")
     typesig("file_path=(?*) -> basic_object")
   end # of Gem::FormatException
   
   class Gem::GemNotFoundException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("errors(?*) -> basic_object")
     typesig("name(?*) -> basic_object")
     typesig("version(?*) -> basic_object")
   end # of Gem::GemNotFoundException
   
   class Gem::GemNotInHomeException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("spec(?*) -> basic_object")
     typesig("spec=(?*) -> basic_object")
   end # of Gem::GemNotInHomeException
   
   class Gem::GemPathSearcher #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("_deprecated_find(?*) -> basic_object")
     typesig("_deprecated_find_active(?*) -> basic_object")
     typesig("_deprecated_find_all(?*) -> basic_object")
@@ -1194,15 +1193,15 @@ module Gem #:nodoc:
   end # of Gem::GemPathSearcher
   
   class Gem::InstallError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::InstallError
   
   class Gem::InvalidSpecificationException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::InvalidSpecificationException
   
   class Gem::LoadError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("name(?*) -> basic_object")
     typesig("name=(?*) -> basic_object")
     typesig("requirement(?*) -> basic_object")
@@ -1210,17 +1209,17 @@ module Gem #:nodoc:
   end # of Gem::LoadError
   
   class Gem::OperationNotSupportedError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::OperationNotSupportedError
   
   class Gem::PathSupport #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("home(?*) -> basic_object")
     typesig("path(?*) -> basic_object")
   end # of Gem::PathSupport
   
   class Gem::Platform #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("==(?*) -> basic_object")
     typesig("===(?*) -> basic_object")
     typesig("=~(?*) -> basic_object")
@@ -1240,23 +1239,23 @@ module Gem #:nodoc:
   end # of Gem::Platform
   
   class Gem::RemoteError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::RemoteError
   
   class Gem::RemoteInstallationCancelled #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::RemoteInstallationCancelled
   
   class Gem::RemoteInstallationSkipped #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::RemoteInstallationSkipped
   
   class Gem::RemoteSourceException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::RemoteSourceException
   
   class Gem::Requirement #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<=>(?*) -> basic_object")
     typesig("===(?*) -> basic_object")
     typesig("=~(?*) -> basic_object")
@@ -1276,7 +1275,7 @@ module Gem #:nodoc:
   end # of Gem::Requirement
   
   class Gem::SpecFetcher #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("cache_dir(?*) -> basic_object")
     typesig("dir(?*) -> basic_object")
     typesig("fetch(?*) -> basic_object")
@@ -1293,7 +1292,7 @@ module Gem #:nodoc:
   end # of Gem::SpecFetcher
   
   class Gem::Specification #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<=>(?*) -> basic_object")
     typesig("==(?*) -> basic_object")
     typesig("_deprecated_cache_gem(?*) -> basic_object")
@@ -1447,17 +1446,17 @@ module Gem #:nodoc:
   end # of Gem::Specification
   
   class Gem::SystemExitException #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("exit_code(?*) -> basic_object")
     typesig("exit_code=(?*) -> basic_object")
   end # of Gem::SystemExitException
   
   class Gem::VerificationError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Gem::VerificationError
   
   class Gem::Version #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("<=>(?*) -> basic_object")
     typesig("bump(?*) -> basic_object")
     typesig("eql?(?*) -> basic_object")
@@ -1478,7 +1477,7 @@ module Gem #:nodoc:
 end # of Gem
 
 class Hash #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("[](?*) -> basic_object")
   typesig("[]=(?*) -> basic_object")
@@ -1535,7 +1534,7 @@ class Hash #:nodoc:
 end # of Hash
 
 class IO #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("<<(?*) -> basic_object")
   typesig("advise(?*) -> basic_object")
   typesig("autoclose=(?*) -> basic_object")
@@ -1609,15 +1608,15 @@ class IO #:nodoc:
 end # of IO
 
 class IOError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of IOError
 
 class IndexError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of IndexError
 
 class Integer #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("ceil(?*) -> basic_object")
   typesig("chr(?*) -> basic_object")
   typesig("denominator(?*) -> basic_object")
@@ -1645,11 +1644,11 @@ class Integer #:nodoc:
 end # of Integer
 
 class Interrupt #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of Interrupt
 
 module Kernel #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("!~(?*) -> basic_object")
   typesig("<=>(?*) -> basic_object")
   typesig("===(?*) -> basic_object")
@@ -1701,25 +1700,25 @@ module Kernel #:nodoc:
 end # of Kernel
 
 class KeyError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of KeyError
 
 class LoadError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of LoadError
 
 class LocalJumpError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("exit_value(?*) -> basic_object")
   typesig("reason(?*) -> basic_object")
 end # of LocalJumpError
 
 module Marshal #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of Marshal
 
 class MatchData #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("[](?*) -> basic_object")
   typesig("begin(?*) -> basic_object")
@@ -1742,15 +1741,15 @@ class MatchData #:nodoc:
 end # of MatchData
 
 module Math #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   
   class Math::DomainError #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Math::DomainError
 end # of Math
 
 class Method #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("[](?*) -> basic_object")
   typesig("arity(?*) -> basic_object")
@@ -1770,7 +1769,7 @@ class Method #:nodoc:
 end # of Method
 
 class Mutex #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("lock(?*) -> basic_object")
   typesig("locked?(?*) -> basic_object")
   typesig("sleep(?*) -> basic_object")
@@ -1780,13 +1779,13 @@ class Mutex #:nodoc:
 end # of Mutex
 
 class NameError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("name(?*) -> basic_object")
   typesig("to_s(?*) -> basic_object")
 end # of NameError
 
 class NilClass #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("&(?*) -> basic_object")
   typesig("^(?*) -> basic_object")
   typesig("inspect(?*) -> basic_object")
@@ -1802,20 +1801,20 @@ class NilClass #:nodoc:
 end # of NilClass
 
 class NoMemoryError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of NoMemoryError
 
 class NoMethodError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("args(?*) -> basic_object")
 end # of NoMethodError
 
 class NotImplementedError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of NotImplementedError
 
 class Numeric #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("%(?*) -> basic_object")
   typesig("+@(?*) -> basic_object")
   typesig("-@(?*) -> basic_object")
@@ -1860,11 +1859,11 @@ class Numeric #:nodoc:
 end # of Numeric
 
 module ObjectSpace #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of ObjectSpace
 
 class PrettyPrint #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("break_outmost_groups(?*) -> basic_object")
   typesig("breakable(?*) -> basic_object")
   typesig("current_group(?*) -> basic_object")
@@ -1883,7 +1882,7 @@ class PrettyPrint #:nodoc:
   typesig("text(?*) -> basic_object")
   
   class PrettyPrint::Breakable #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("indent(?*) -> basic_object")
     typesig("obj(?*) -> basic_object")
     typesig("output(?*) -> basic_object")
@@ -1891,7 +1890,7 @@ class PrettyPrint #:nodoc:
   end # of PrettyPrint::Breakable
   
   class PrettyPrint::Group #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("break(?*) -> basic_object")
     typesig("break?(?*) -> basic_object")
     typesig("breakables(?*) -> basic_object")
@@ -1900,14 +1899,14 @@ class PrettyPrint #:nodoc:
   end # of PrettyPrint::Group
   
   class PrettyPrint::GroupQueue #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("delete(?*) -> basic_object")
     typesig("deq(?*) -> basic_object")
     typesig("enq(?*) -> basic_object")
   end # of PrettyPrint::GroupQueue
   
   class PrettyPrint::SingleLine #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("breakable(?*) -> basic_object")
     typesig("first?(?*) -> basic_object")
     typesig("flush(?*) -> basic_object")
@@ -1917,7 +1916,7 @@ class PrettyPrint #:nodoc:
   end # of PrettyPrint::SingleLine
   
   class PrettyPrint::Text #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("add(?*) -> basic_object")
     typesig("output(?*) -> basic_object")
     typesig("width(?*) -> basic_object")
@@ -1925,7 +1924,7 @@ class PrettyPrint #:nodoc:
 end # of PrettyPrint
 
 class Proc #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("===(?*) -> basic_object")
   typesig("[](?*) -> basic_object")
@@ -1946,14 +1945,14 @@ class Proc #:nodoc:
 end # of Proc
 
 module Process #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   
   module Process::GID #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Process::GID
   
   class Process::Status #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("&(?*) -> basic_object")
     typesig("==(?*) -> basic_object")
     typesig(">>(?*) -> basic_object")
@@ -1972,16 +1971,16 @@ module Process #:nodoc:
   end # of Process::Status
   
   module Process::Sys #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Process::Sys
   
   module Process::UID #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of Process::UID
 end # of Process
 
 class Random #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("bytes(?*) -> basic_object")
   typesig("marshal_dump(?*) -> basic_object")
@@ -1991,7 +1990,7 @@ class Random #:nodoc:
 end # of Random
 
 class Range #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("===(?*) -> basic_object")
   typesig("begin(?*) -> basic_object")
@@ -2013,11 +2012,11 @@ class Range #:nodoc:
 end # of Range
 
 class RangeError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of RangeError
 
 class Rational #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("*(?*) -> basic_object")
   typesig("**(?*) -> basic_object")
   typesig("+(?*) -> basic_object")
@@ -2046,11 +2045,11 @@ class Rational #:nodoc:
 end # of Rational
 
 module RbConfig #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of RbConfig
 
 class Regexp #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("===(?*) -> basic_object")
   typesig("=~(?*) -> basic_object")
@@ -2070,18 +2069,18 @@ class Regexp #:nodoc:
 end # of Regexp
 
 class RegexpError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of RegexpError
 
 class RubyVM #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   
   class RubyVM::Env #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
   end # of RubyVM::Env
   
   class RubyVM::InstructionSequence #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("disasm(?*) -> basic_object")
     typesig("disassemble(?*) -> basic_object")
     typesig("eval(?*) -> basic_object")
@@ -2091,38 +2090,38 @@ class RubyVM #:nodoc:
 end # of RubyVM
 
 class RuntimeError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of RuntimeError
 
 class ScriptError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of ScriptError
 
 class SecurityError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of SecurityError
 
 module Signal #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of Signal
 
 class SignalException #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("signm(?*) -> basic_object")
   typesig("signo(?*) -> basic_object")
 end # of SignalException
 
 class StandardError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of StandardError
 
 class StopIteration #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("result(?*) -> basic_object")
 end # of StopIteration
 
 class String #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("%(?*) -> basic_object")
   typesig("*(?*) -> basic_object")
   typesig("+(?*) -> basic_object")
@@ -2235,7 +2234,7 @@ class String #:nodoc:
 end # of String
 
 class Struct #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("[](?*) -> basic_object")
   typesig("[]=(?*) -> basic_object")
@@ -2254,7 +2253,7 @@ class Struct #:nodoc:
   typesig("values_at(?*) -> basic_object")
   
   class Struct::Group #:nodoc:
-    include RubyBreaker::Broken
+    include ::RubyBreaker::Broken
     typesig("gid(?*) -> basic_object")
     typesig("gid=(?*) -> basic_object")
     typesig("mem(?*) -> basic_object")
@@ -2265,7 +2264,7 @@ class Struct #:nodoc:
     typesig("passwd=(?*) -> basic_object")
     
     class Struct::Passwd #:nodoc:
-      include RubyBreaker::Broken
+      include ::RubyBreaker::Broken
       typesig("change(?*) -> basic_object")
       typesig("change=(?*) -> basic_object")
       typesig("dir(?*) -> basic_object")
@@ -2288,7 +2287,7 @@ class Struct #:nodoc:
       typesig("uid=(?*) -> basic_object")
       
       class Struct::Tms #:nodoc:
-        include RubyBreaker::Broken
+        include ::RubyBreaker::Broken
         typesig("cstime(?*) -> basic_object")
         typesig("cstime=(?*) -> basic_object")
         typesig("cutime(?*) -> basic_object")
@@ -2303,7 +2302,7 @@ class Struct #:nodoc:
 end # of Struct
 
 class Symbol #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("<=>(?*) -> basic_object")
   typesig("==(?*) -> basic_object")
   typesig("===(?*) -> basic_object")
@@ -2331,26 +2330,26 @@ class Symbol #:nodoc:
 end # of Symbol
 
 class SyntaxError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of SyntaxError
 
 class SystemCallError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("errno(?*) -> basic_object")
 end # of SystemCallError
 
 class SystemExit #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("status(?*) -> basic_object")
   typesig("success?(?*) -> basic_object")
 end # of SystemExit
 
 class SystemStackError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of SystemStackError
 
 class Thread #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("[](?*) -> basic_object")
   typesig("[]=(?*) -> basic_object")
   typesig("abort_on_exception(?*) -> basic_object")
@@ -2379,11 +2378,11 @@ class Thread #:nodoc:
 end # of Thread
 
 class ThreadError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of ThreadError
 
 class ThreadGroup #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("add(?*) -> basic_object")
   typesig("enclose(?*) -> basic_object")
   typesig("enclosed?(?*) -> basic_object")
@@ -2391,7 +2390,7 @@ class ThreadGroup #:nodoc:
 end # of ThreadGroup
 
 class Time #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("+(?*) -> basic_object")
   typesig("-(?*) -> basic_object")
   typesig("<=>(?*) -> basic_object")
@@ -2452,7 +2451,7 @@ class Time #:nodoc:
 end # of Time
 
 class TrueClass #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("&(?*) -> basic_object")
   typesig("^(?*) -> basic_object")
   typesig("to_s(?*) -> basic_object")
@@ -2460,11 +2459,11 @@ class TrueClass #:nodoc:
 end # of TrueClass
 
 class TypeError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of TypeError
 
 class UnboundMethod #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
   typesig("==(?*) -> basic_object")
   typesig("arity(?*) -> basic_object")
   typesig("bind(?*) -> basic_object")
@@ -2480,5 +2479,5 @@ class UnboundMethod #:nodoc:
 end # of UnboundMethod
 
 class ZeroDivisionError #:nodoc:
-  include RubyBreaker::Broken
+  include ::RubyBreaker::Broken
 end # of ZeroDivisionError
