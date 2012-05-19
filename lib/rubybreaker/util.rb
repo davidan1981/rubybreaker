@@ -4,7 +4,9 @@
 
 module RubyBreaker
 
-  module Utilities
+  # This module has utility functions that are useful across all components
+  # in the project.
+  module Util
 
     # File activesupport/lib/active_support/inflector/methods.rb, line 48
     def self.underscore(camel_cased_word)
@@ -28,14 +30,4 @@ module RubyBreaker
 
   end
 
-  # http://mentalized.net/journal/2010/04/02/suppress_warnings_from_ruby/
-  module Kernel
-    def suppress_warning
-      original_verbosity = $VERBOSE
-      $VERBOSE = nil
-      result = yield
-      $VERBOSE = original_verbosity
-      return result
-    end
-  end
 end

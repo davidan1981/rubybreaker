@@ -6,9 +6,8 @@
 
 dir = File.dirname(__FILE__) 
 require_relative "util"
-require_relative "type_placeholder"
-require_relative "../context"
 require_relative "../debug"
+require_relative "type_placeholder"
 require_relative "pluggable"
 require_relative "type_system"
 
@@ -56,12 +55,12 @@ module RubyBreaker
       def initialize(); @switch = true end
 
       def turn_on();
-        Debug.msg("Switch turned on")
+        RubyBreaker.log("Switch turned on")
         @switch = true; 
       end
 
       def turn_off(); 
-        Debug.msg("Switch turned off")
+        RubyBreaker.log("Switch turned off")
         @switch = false; 
       end
 
@@ -120,7 +119,7 @@ module RubyBreaker
         # this is what the renamed method
         stub_meth_name = get_alt_meth_name(meth_name) 
 
-        Debug.msg("Route to #{stub_meth_name}",CONTEXT)
+        RubyBreaker.log("Route to #{stub_meth_name}", :debug, CONTEXT)
 
         # short-circuit if switch was off--i.e., no monitoring
         if !switch
@@ -143,7 +142,7 @@ module RubyBreaker
 
         mm.monitor_before_method(obj, meth_info)
 
-        Debug.msg("monitor_before_method ended")
+        RubyBreaker.log("monitor_before_method ended")
 
         # we are going to turn the switch back on
         GLOBAL_MONITOR_SWITCH.turn_on()
@@ -197,7 +196,7 @@ module RubyBreaker
       def self.rename_meth(recv, meth_name)
         alt_meth_name = MonitorUtils.get_alt_meth_name(meth_name)
         recv.module_eval("alias :\"#{alt_meth_name}\" :\"#{meth_name}\"")
-        Debug.msg("Adding alternate method for #{meth_name}")
+        RubyBreaker.log("Adding alternate method for #{meth_name}")
         recv.module_eval <<-EOF
           def #{meth_name}(*args, &blk)
             RubyBreaker::Runtime::MonitorUtils.route(self, 
@@ -210,7 +209,9 @@ module RubyBreaker
 
       # Installs an module (class) monitor to the object. 
       def self.install_module_monitor(mod)
-        Debug.short_msg("Installing module monitor for #{mod}")
+
+        RubyBreaker.log("Installing module monitor for #{mod}")
+
         Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
         Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
 
@@ -229,7 +230,6 @@ module RubyBreaker
             self.rename_meth(mod,m) 
           end 
         end
-        Debug.feed_line()
       end
 
     end

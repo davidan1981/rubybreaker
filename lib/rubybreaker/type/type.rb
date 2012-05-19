@@ -17,7 +17,7 @@
 #
 
 require_relative "../util"
-require_relative "../context.rb"
+require_relative "../debug"
 
 module RubyBreaker
 

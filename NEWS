@@ -1,5 +1,6 @@
 # VERSION 0.0.3
 * A class or module can be both Breakable and Broken at the same time.
+* Better logging/debugging output
 
 # VERSION 0.0.2 
 * Class methods can be auto-documented or manually documented.

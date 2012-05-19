@@ -10,6 +10,7 @@ require_relative "object_wrapper"
 require_relative "type_placeholder"
 require_relative "../type"
 require_relative "../typing"
+require_relative "../debug"
 
 module RubyBreaker
 
@@ -192,7 +193,7 @@ module RubyBreaker
           end
         end
 
-        Debug.msg("In module monitor_before #{meth_name}")
+        RubyBreaker.log("In module monitor_before #{meth_name}")
         
         meth_type = meth_type_map[meth_name]
         
@@ -241,7 +242,7 @@ module RubyBreaker
         args = meth_info.args
         blk = meth_info.blk
 
-        Debug.msg("In module monitor_after #{meth_name}")
+        RubyBreaker.log("In module monitor_after #{meth_name}")
 
         meth_type_map = Breakable::TYPE_PLACEHOLDER_MAP[mod].meth_type_map
 

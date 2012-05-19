@@ -232,7 +232,7 @@ grammar TypeGrammar
         pos = RubyBreaker::Position.get()
         pos.col = interval.first
         begin 
-          mod_name = RubyBreaker::Utilities.camelize(text_value)
+          mod_name = RubyBreaker::Util.camelize(text_value)
           mod = eval mod_name
           t = RubyBreaker::NominalType.new(mod,pos)
         rescue

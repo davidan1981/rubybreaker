@@ -13,6 +13,10 @@ module RubyBreaker
 
       opts.banner = "Usage: #{File.basename(__FILE__)} [options] in_file[.rb]" 
 
+      opts.on("--debug", "Run in debug mode") do 
+        OPTIONS[:debug] = true
+      end
+
       opts.on("-f","--io-file FILE","Specify an input/output file") do |f|
         OPTIONS[:output] = f
       end
@@ -52,9 +56,12 @@ module RubyBreaker
 
     # There has to be an input file
     if ARGV.length < 1 then 
+      puts "Specify a Ruby program"
       puts option_parser.banner
       exit(1)
     end
+
+    OPTIONS[:file] = ARGV[0]
 
     Main.run()
 

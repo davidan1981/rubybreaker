@@ -25,7 +25,6 @@ module RubyBreaker
       alias :__run :run
 
       def run(*args,&blk)
-        # RubyBreaker::Utilities.rb_print("Running " + args[0].to_s)
         RubyBreaker::TestCase.setup()
         __run(*args,&blk)
         RubyBreaker::TestCase.teardown()

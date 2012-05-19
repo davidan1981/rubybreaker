@@ -276,8 +276,8 @@ and returns a `String` object. Note that these types are in lowercase,
 indicating they are objects and not modules or classes themselves.
 
 There are several types that represent an object: nominal, duck, fusion,
-nil, 'any', and block. Each type signature itself represents a method type
-or a method list type (explained below). 
+nil, 'any', 'or', optional, variable-length, and block. Each type signature
+itself represents a method type or a method list type (explained below). 
 
 ### Nominal Type
 
@@ -330,6 +330,20 @@ other type is not a subtype of `?`. This becomes a bit complicated for
 method or block argument types because of their contra-variance
 characteristic. Please refer to the section *Subtyping*.
 
+### Or Type
+
+Any above types can be "or"ed together, using `||`, to represent an object
+that can be either one or the other. It _does_ not represent an object that
+has to be both (which is not supported by RubyBreaker).
+
+### Optional Argument Type and Variable-Length Argument Type
+
+Another useful features of Ruby are the optional argument type and the
+variable-length argument type. The former represents an argument that has a
+default value (and therefore does not have to be provided). The latter
+represents zero or more arguments of the same type. These are denoted by
+suffices, `?` and `*`, respectively.
+
 ### Block Type
 
 One of the Ruby's prominent features is the block argument. It allows
@@ -344,14 +358,6 @@ RubyBreaker does supports nested blocks as Ruby 1.9 finally allows them.
 However, *keep in mind* that RubyBreaker *cannot* automatically document the
 block types due to `yield` being a language construct rather than a method,
 which means it cannot be captured by meta-programming!
-
-### Optional Argument Type and Variable-Length Argument Type
-
-Another useful features of Ruby are the optional argument type and the
-variable-length argument type. The former represents an argument that has a
-default value (and therefore does not have to be provided). The latter
-represents zero or more arguments of the same type. These are denoted by
-suffices, `?` and `*`, respectively.
 
 ### Method Type and Method List Types
 

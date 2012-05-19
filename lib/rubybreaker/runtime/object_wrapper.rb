@@ -1,6 +1,8 @@
 #--
 # This program keeps track of every method call to a wrapped object. 
 
+require_relative "../debug"
+
 module RubyBreaker
 
   module Runtime
@@ -66,7 +68,7 @@ module RubyBreaker
       
       # This method missing method redirects all other method calls.
       def method_missing(mname,*args,&blk)
-        Debug.msg("Method_missing for #{mname}")
+        ::RubyBreaker.log("Method_missing for #{mname}")
         if GLOBAL_MONITOR_SWITCH.switch
           @__rubybreaker_type.add_meth(mname)
           retval =  @__rubybreaker_obj.send(mname,*args,&blk)

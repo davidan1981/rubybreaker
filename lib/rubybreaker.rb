@@ -3,6 +3,7 @@
 # observed at runtime and generates type annotation at the end.  It can be
 # run as either a stand-alone script or as a Ruby library. 
 
+require_relative "rubybreaker/debug"
 require_relative "rubybreaker/runtime"
 require_relative "rubybreaker/test"
 
@@ -16,12 +17,13 @@ module RubyBreaker
   # Options for RubyBreaker
   OPTIONS = {
     :debug => false,               # in debug mode?
-    :verbose => false,              # in verbose mode?
+    :verbose => false,             # in RubyBreaker.verbose mode?
     :mode => :lib,                 # bin or lib?
     :io_file => nil,               # generate input/output other than default?
     :append => true,               # append to the input file (if there is)?
     :stdout => true,               # also display on the screen?
     :rubylib => true,              # include core ruby library documentation?
+    :file => nil,                  # the input Ruby program (as typed by the user)
   }
 
   # This array lists modules/classes that are actually instrumented with a
@@ -48,10 +50,11 @@ module RubyBreaker
     def self.setup()
 
       BREAKABLE.each do |mod|
-        # Avoid already installed module or now Broken module. Remember,
-        # once a module is a declared to be Broken, it wins. Broken modules
-        # cannot be Breakable!
-        unless INSTALLED.include?(mod) # || BROKEN.include?(mod)
+
+        # Remember, RubyBreaker now supports a hybrid of Breakable and
+        # Broken module. Just check if the module has already been
+        # instrumented.
+        unless INSTALLED.include?(mod) 
           MonitorInstaller.install_module_monitor(mod)
           INSTALLED << mod
         end
@@ -68,6 +71,7 @@ module RubyBreaker
     # Reads the input file if specified or exists
     def self.input()
       return unless OPTIONS[:io_file] && File.exist?(OPTIONS[:io_file])
+      RubyBreaker.verbose("RubyBreaker input file exists...loading")
       eval "load \"#{OPTIONS[:io_file]}\"", TOPLEVEL_BINDING
     end
 
@@ -136,8 +140,10 @@ module RubyBreaker
       pp.breakable()
     end
 
-    # This method will generate the output 
+    # This method will generate the output.
     def self.output()
+
+      RubyBreaker.verbose("Generating type documentation")
 
       io_exist = OPTIONS[:io_file] && File.exist?(OPTIONS[:io_file])
 
@@ -162,14 +168,24 @@ module RubyBreaker
         end
         f.puts str
       end
+
+      RubyBreaker.verbose("Done generating type documentation")
     end
 
-    # This method will run the input file
+    # This method will run do things in the following order:
+    #
+    #   * Checks to see if the user program and an input file exists
+    #   * Loads the documentation for Ruby Core Library (TODO)
+    #   * Reads the input type documentation if any
+    #   * Reads (require's) the user program
+    #
     def self.run()
 
-      # First, take care of the program file.
+      RubyBreaker.setup_logger()
+      RubyBreaker.verbose("Running RubyBreaker")
 
-      argv0 = ARGV[0]
+      # First, take care of the program file.
+      argv0 = OPTIONS[:file]
       prog_file = argv0
       prog_file = File.expand_path(prog_file)
 
@@ -179,7 +195,7 @@ module RubyBreaker
       end 
 
       if !File.exist?(prog_file)
-        puts "ERROR: '#{argv0}' is an invalid file."
+        fatal("#{argv0} is an invalid file.")
         exit(1)
       end
 
@@ -190,6 +206,7 @@ module RubyBreaker
       OPTIONS[:io_file] = File.absolute_path(OPTIONS[:io_file])
 
       if OPTIONS[:rubylib]
+        RubyBreaker.verbose("Loading RubyBreaker's Ruby Core Library documentation")
         # Load the core library type documentation
         eval("require \"rubybreaker/rubylib\"", TOPLEVEL_BINDING)
       end
@@ -201,11 +218,14 @@ module RubyBreaker
       # Finally, require the program file! Let it run! Wheeee!
       eval("require '#{prog_file}'", TOPLEVEL_BINDING)
 
+      RubyBreaker.verbose("Done running the input program")
+
     end
 
   end
 
-  # Just redirecting
+  # This is the manual indicator for the program entry point. It simply
+  # redirects to the monitor setup code.
   def self.monitor()
     Main.setup()
   end

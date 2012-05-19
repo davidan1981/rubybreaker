@@ -37,7 +37,7 @@ module RubyBreaker
     # print method.
     def self.unparse_pp(pp,t)
       if t.instance_of?(NominalType)
-        tname = Utilities.underscore(t.mod)
+        tname = Util.underscore(t.mod)
         tokens = tname.split("/")        
         tname = tokens.last if tokens.size > 1
         pp.text(tname)

@@ -16,6 +16,11 @@ The output of RubyBreaker is an executable Ruby code (for the convenience of
 the author). But, for most Ruby programmers, this documentation may be more
 useful if the output was somehow incorporated with the RDoc output.
 
+# Core Library Documentation
+
+It might be very useful to manually document all Core Library classes and
+modules.
+
 # Ruby on Rails Support
 
 Duh...
