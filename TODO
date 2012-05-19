@@ -5,13 +5,12 @@ documentation can be used to enforce correct types at runtime. It is often
 helpful to find type errors earlier on during execution to narrow down the
 root cause of the problem.
 
-# Hybrid of Breakable and Broken
+# More Testing Frameworks
 
-A module or class cannot be both Breakable and Broken. Once it is declared
-to be Broken, it is Broken no matter what. In theory, it is possible to
-selectively auto-document methods that are not yet documented.
+The Ruby community takes advantage of various testing frameworks other than
+the Ruby Unit Testing Framework. 
 
-# RDoc Documentation
+# RDoc and YARD Documentation Support
 
 The output of RubyBreaker is an executable Ruby code (for the convenience of
 the author). But, for most Ruby programmers, this documentation may be more

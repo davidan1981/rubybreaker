@@ -213,15 +213,23 @@ module RubyBreaker
         Debug.short_msg("Installing module monitor for #{mod}")
         Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
         Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
+
         meth_type_map = []
         meths = mod.instance_methods(false)  
+
+        # RubyBreaker now supports the hybrid of Breakable and Broken. Here,
+        # see if any methods are already broken.
+        broken_meth_type_map = Inspector.inspect_all(mod)
+        broken_meths = broken_meth_type_map.keys
+
         meths.each do |m| 
-          self.rename_meth(mod,m) 
+          # As long as the method is not "Broken" yet, it is considered
+          # Breakable (if the module is declared to be Breakable).
+          unless broken_meths.include?(m)
+            self.rename_meth(mod,m) 
+          end 
         end
         Debug.feed_line()
-      end
-
-      def self.report(mod)
       end
 
     end

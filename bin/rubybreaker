@@ -45,8 +45,10 @@ module RubyBreaker
     OPTIONS[:mode] = :bin  # indicate that RubyBreaker is being run as a
                            # binary (program).
     
-    puts COPYRIGHT
-    puts
+    if OPTIONS[:verbose]   # Show copyright info only when verbose
+      puts COPYRIGHT 
+      puts
+    end
 
     # There has to be an input file
     if ARGV.length < 1 then 

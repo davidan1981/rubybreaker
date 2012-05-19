@@ -171,10 +171,20 @@ signature `bar(fixnum[to_s]) -> string`, which means it takes an object that
 has `Fixnum`'s `to_s` method and returns a string. More detail on the type
 annotation language will be explained in later section.
 
-It is possible to include either `Breakable` or `Broken` in an eigen-class
-to document class methods. To make this easier, RubyBreaker will
-automatically support auto-documentation and manual documentation of class
-methods if the original module is declared as `Breakable` or `Broken`,
+### Hybrid of Breakable and Broken
+
+Starting from version 0.0.3, RubyBreaker allows a module to be declared as
+`Breakable` and `Broken` at the same time. If a method has a corresponding
+type signature (manually documented) somewhere, then RubyBreaker will not
+monitor it during runtime. All other methods will be instrumented and
+monitored by RubyBreaker.
+
+### Class Methods
+
+It is possible to include `Breakable` and/or `Broken` in an eigen-class to
+document class methods. To make this easier, RubyBreaker will automatically
+support auto-documentation and manual documentation of class methods if the
+original module is declared as `Breakable` and/or `Broken`,
 respectively--that is, up to immediate eigen class level of a "nominal"
 module.  The following example shows how class methods can be
 auto-documented and manually documented, respectively.
@@ -193,11 +203,6 @@ auto-documented and manually documented, respectively.
         def foo(x); x.to_s end
       end
     end
-
-Keep in mind that `Broken` module always wins against `Breakable`.  In other
-words, if a module is declared as both `Broken` and `Breakable`, it is
-treated as `Broken`. Future versions of RubyBreaker will support a hybrid of
-the two modules, but it remains as a limitation in the current version.
 
 ### Program Entry Point
 

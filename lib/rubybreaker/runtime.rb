@@ -41,7 +41,7 @@ module RubyBreaker
     end
 
   end
- 
+
   # This module is included for "broken" classes.
   module Broken
 
@@ -85,7 +85,8 @@ module RubyBreaker
               meth_type.types << t
             else
               # then upgrade it
-              placeholder.meth_type_map[t.meth_name] = MethodListType.new([meth_type, t])
+              placeholder.meth_type_map[t.meth_name] = 
+                  MethodListType.new([meth_type, t])
             end
           else
             placeholder.meth_type_map[t.meth_name] = t

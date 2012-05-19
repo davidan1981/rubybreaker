@@ -16,7 +16,7 @@ module RubyBreaker
   # Options for RubyBreaker
   OPTIONS = {
     :debug => false,               # in debug mode?
-    :verbose => true,              # in verbose mode?
+    :verbose => false,              # in verbose mode?
     :mode => :lib,                 # bin or lib?
     :io_file => nil,               # generate input/output other than default?
     :append => true,               # append to the input file (if there is)?
@@ -51,7 +51,7 @@ module RubyBreaker
         # Avoid already installed module or now Broken module. Remember,
         # once a module is a declared to be Broken, it wins. Broken modules
         # cannot be Breakable!
-        unless INSTALLED.include?(mod) || BROKEN.include?(mod)
+        unless INSTALLED.include?(mod) # || BROKEN.include?(mod)
           MonitorInstaller.install_module_monitor(mod)
           INSTALLED << mod
         end
