@@ -6,11 +6,13 @@ to be dynamically instrumented (as "breakable" methods are) and inspected
 for each argument type and return type. Although this is still a dynamic
 type checking, it finds type errors earlier in the program execution.
 
-# More Testing Frameworks
+# Additional Testing Frameworks
 
-The Ruby community has other testing frameworks such as RSpec and Cucumber.
-RubyBreaker should be able to support these frameworks so that those test
-suites can be used for RubyBreaker.
+RubyBreaker supports the built-in testing framework and RSpec. There are
+other testing frameworks such as Cucumber or Shouda. Since RubyBreaker's
+goal is to help Ruby programmers write better code by taking advantage of
+existing test suites, it seems appropriate to support as many testing
+frameworks as possible.
 
 # RDoc and YARD Documentation Support
 
