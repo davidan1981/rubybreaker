@@ -5,6 +5,7 @@ require "rake"
 require "rake/testtask"
 require "rdoc/task"
 require "rake/clean"
+require 'rspec/core/rake_task'
 
 begin 
   require "rdiscount"   # used to generate the doc html page
@@ -23,7 +24,7 @@ CLEAN.concat(FileList["webpage/rdoc",
 task :default => [:test]
 
 desc "Do all"
-task :all => [:parser, :test, :rdoc, :webpage, :gem] do |t|
+task :all => [:parser, :test, :rspec, :rdoc, :webpage, :gem] do |t|
 end
 
 desc "Generate gemspec"
@@ -57,9 +58,18 @@ task :parser do |t|
 end
 
 desc "Run basic tests"
-Rake::TestTask.new("test") do |t|
+Rake::TestTask.new(:"test") do |t|
   dir = File.dirname(__FILE__)
   t.libs << "lib"
-  t.test_files = FileList["test/*.rb"]
+  test_files = FileList["test/ts_*.rb"]
+  test_files.exclude("test/ts_rspec.rb")
+  t.test_files = test_files
 end
+
+desc "Run RSpec test"
+RSpec::Core::RakeTask.new(:rspec) do |t|
+  t.pattern = ["test/ts_rspec.rb"]
+  t.fail_on_error = false
+end
+
 

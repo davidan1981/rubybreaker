@@ -9,11 +9,11 @@ module RubyBreaker
   # class. 
   module TestCase
 
-    def self.setup()
+    def self.__rubybreaker_setup()
       Main.setup()
     end
 
-    def self.teardown()
+    def self.__rubybreaker_teardown()
       # Main.output()
     end
 
@@ -25,9 +25,9 @@ module RubyBreaker
       alias :__run :run
 
       def run(*args,&blk)
-        RubyBreaker::TestCase.setup()
+        RubyBreaker::TestCase.__rubybreaker_setup()
         __run(*args,&blk)
-        RubyBreaker::TestCase.teardown()
+        RubyBreaker::TestCase.__rubybreaker_teardown()
       end
 
       EOS
