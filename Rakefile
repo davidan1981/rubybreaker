@@ -5,12 +5,17 @@ require "rake"
 require "rake/testtask"
 require "rdoc/task"
 require "rake/clean"
-require 'rspec/core/rake_task'
 
 begin 
   require "rdiscount"   # used to generate the doc html page
 rescue LoadError => e
-  puts "[WARNING] No rdiscount is installed."
+  puts "[WARNING] No rdiscount is installed on this computer."
+end
+
+begin 
+  require 'rspec/core/rake_task'
+rescue LoadError => e
+  puts "[WARNING] No rspec-core is installed on this computer."
 end
 
 # Use rake/clean to remove generated files
@@ -40,15 +45,16 @@ end
 
 desc "Generate the webpage"
 task :webpage do |t|
-  break unless defined?(RDiscount)
-  dir = File.dirname(__FILE__)
-  readme_md = "#{dir}/README.md"
-  output = "#{dir}/webpage/index.html"
-  body = RDiscount.new(File.read(readme_md)).to_html
-  header = File.read("#{dir}/webpage/header.html")
-  footer = File.read("#{dir}/webpage/footer.html")
-  html = header + body + footer
-  File.open(output, "w") { |f| f.write(html) }
+  if defined?(RDiscount)
+    dir = File.dirname(__FILE__)
+    readme_md = "#{dir}/README.md"
+    output = "#{dir}/webpage/index.html"
+    body = RDiscount.new(File.read(readme_md)).to_html
+    header = File.read("#{dir}/webpage/header.html")
+    footer = File.read("#{dir}/webpage/footer.html")
+    html = header + body + footer
+    File.open(output, "w") { |f| f.write(html) }
+  end
 end
 
 desc "Generate parser"
@@ -66,10 +72,12 @@ Rake::TestTask.new(:"test") do |t|
   t.test_files = test_files
 end
 
-desc "Run RSpec test"
-RSpec::Core::RakeTask.new(:rspec) do |t|
-  t.pattern = ["test/ts_rspec.rb"]
-  t.fail_on_error = false
+if defined?(RSpec)
+  desc "Run RSpec test"
+  RSpec::Core::RakeTask.new(:rspec) do |t|
+    t.pattern = ["test/ts_rspec.rb"]
+    t.fail_on_error = false
+  end
 end
 
 

@@ -25,10 +25,9 @@ be found in [here](rdoc/index.html).
 
 ## Limitations
 
-* It only works on toy Ruby programs so far :)
 * Block argument cannot be auto-documented. (Inherent)
 * Manual modification (minimal) of code is required.
-* No parametric polymorphic types are supported. 
+* Parametric polymorphic types are not supported. 
 
 ## Requirements
 
@@ -301,7 +300,9 @@ instance, `fixnum` is an object of type `Fixnum`. Use lower-case letters and
 underscores instead of _camelized_ name. `MyClass`, for example would be
 `my_class` in RubyBreaker type signatures. There is no particular
 reason for this convention other than it is the common practice used in
-RubyDoc. 
+RubyDoc. Use `/` to indicate the namespace delimiter `::`. For example,
+`NamspaceA::ClassB` would be represented by `namespace_a/class_b` in
+a RubyBreaker type signature.
 
 ### Self Type
 
@@ -457,8 +458,6 @@ RubyBreaker. *Technical documentation coming soon...*
 The term, "Fusion Type," is first coined by Professor Michael W. Hicks at
 University of Maryland and represents an object using a structural type with
 respect to a nominal type. 
-
-* * *
 
 # Copyright
 Copyright (c) 2012 Jong-hoon (David) An. All Rights Reserved.

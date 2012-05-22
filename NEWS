@@ -1,3 +1,7 @@
+# VERSION 0.0.4
+* RSpec is supported.
+* Namespace is recognized in type signatures.
+
 # VERSION 0.0.3
 * A class or module can be both Breakable and Broken at the same time.
 * Better logging/debugging output
