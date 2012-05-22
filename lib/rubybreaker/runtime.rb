@@ -5,6 +5,7 @@
 
 require_relative "runtime/overrides"
 require_relative "runtime/typesig_parser"
+require_relative "runtime/typesig_unparser"
 require_relative "runtime/monitor"
 require_relative "runtime/inspector"
 

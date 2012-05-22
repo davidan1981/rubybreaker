@@ -18,13 +18,13 @@ module RubyBreaker
     # This method is used to determine if the inner type of +t+ should be
     # wrapped around a parenthesis. This is for optional type and variable
     # length type.
-    def self.peek_and_unparse_pp_inner_type(pp,t)
+    def self.peek_and_unparse_pp_inner_type(pp, t, opts={})
       if t.type.kind_of?(OrType)
         pp.text("(")
-        self.unparse_pp(pp,t.type)
+        self.unparse_pp(pp, t.type, opts)
         pp.text(")")
       else
-        self.unparse_pp(pp,t.type)
+        self.unparse_pp(pp, t.type, opts)
       end
     end
 
@@ -35,23 +35,34 @@ module RubyBreaker
 
     # This recursive method unparses a RubyBreaker type using the pretty
     # print method.
-    def self.unparse_pp(pp,t)
+    def self.unparse_pp(pp, t, opts={})
       if t.instance_of?(NominalType)
-        tname = Util.underscore(t.mod)
-        tokens = tname.split("/")        
-        tname = tokens.last if tokens.size > 1
+        if opts[:namespace] 
+          namespace = opts[:namespace].name
+          pattern = "^#{namespace}::"
+          mod_name = t.mod.name.sub(/#{pattern}/, "")
+        else
+          mod_name = t.mod.name
+        end
+        unless opts[:style] == :camelize
+          tname = Util.underscore(mod_name)
+        else
+          tname = mod_name
+        end
+        # tokens = tname.split("/")        
+        # tname = tokens.last if tokens.size > 1
         pp.text(tname)
       elsif t.instance_of?(SelfType)
         pp.text("self")
       elsif t.instance_of?(DuckType)
         unparse_pp_object_type(pp,t)
       elsif t.instance_of?(FusionType)
-        unparse_pp(pp,t.nom_type)
+        unparse_pp(pp, t.nom_type, opts)
         unparse_pp_object_type(pp,t)
       elsif t.instance_of?(MethodType)
         pp.text("#{t.meth_name}(")
         t.arg_types.each_with_index do |arg_type,i|
-          unparse_pp(pp,arg_type)
+          unparse_pp(pp, arg_type, opts)
           if i < t.arg_types.size - 1
             pp.text(",")
             pp.fill_breakable()
@@ -61,17 +72,17 @@ module RubyBreaker
         pp.fill_breakable()
         if t.blk_type
           pp.text("{")
-          unparse_pp(pp,t.blk_type)
+          unparse_pp(pp, t.blk_type, opts)
           pp.text("}")
           pp.fill_breakable()
         end
         pp.text("->")
         pp.fill_breakable()
-        unparse_pp(pp,t.ret_type)
+        unparse_pp(pp, t.ret_type, opts)
       elsif t.instance_of?(BlockType)
         pp.text("|")
         t.arg_types.each_with_index do |arg_type,i|
-          unparse_pp(pp,arg_type)
+          unparse_pp(pp, arg_type, opts)
           if i < t.arg_types.size - 1
             pp.text(",")
             pp.fill_breakable()
@@ -81,33 +92,33 @@ module RubyBreaker
         pp.fill_breakable()
         if t.blk_type
           pp.text("{")
-          unparse_pp(pp,t.blk_type)
+          unparse_pp(pp, t.blk_type, opts)
           pp.text("}")
           pp.fill_breakable()
         end
         pp.text("->")
         pp.fill_breakable()
-        unparse_pp(pp,t.ret_type)
+        unparse_pp(pp, t.ret_type, opts)
       elsif t.instance_of?(MethodListType)
         t.types.each_with_index do |typ,i|
-          unparse_pp(pp,typ)
+          unparse_pp(pp, typ, opts)
           if i < t.types.size - 1 
             pp.fill_breakable()
           end
         end
       elsif t.instance_of?(OrType)
         t.types.each_with_index do |typ,i|
-          unparse_pp(pp,typ)
+          unparse_pp(pp, typ, opts)
           if i < t.types.size - 1
             pp.text(" ||")
             pp.fill_breakable()
           end
         end
       elsif t.instance_of?(OptionalType)
-        peek_and_unparse_pp_inner_type(pp,t)
+        peek_and_unparse_pp_inner_type(pp, t, opts)
         pp.text("?")
       elsif t.instance_of?(VarLengthType)
-        peek_and_unparse_pp_inner_type(pp,t)
+        peek_and_unparse_pp_inner_type(pp, t, opts)
         pp.text("*")
       elsif t.instance_of?(NilType)
         pp.text("nil")
@@ -119,12 +130,16 @@ module RubyBreaker
 
     public
 
-    # This method is used to display any RubyBreaker type in a user-friendly
-    # way using the pretty print method. 
-    def self.unparse(t)
+    # This method unparses the RubyBreaker type according to the specified
+    # options.
+    #
+    # t:: RubyBreaker type
+    # opts:: 
+    #
+    def self.unparse(t, opts={})
       str = ""
       pp = PrettyPrint.new(str)
-      self.unparse_pp(pp,t)
+      self.unparse_pp(pp, t, opts)
       pp.flush
       return str.strip()
     end
@@ -132,9 +147,9 @@ module RubyBreaker
 
   class TypeDefs::Type
 
-    # This method unparses the type using the pretty print method.
-    def unparse()
-      TypeUnparser.unparse(self)
+    # This method is a shorthand for calling TypeUnparser.unparse(t). 
+    def unparse(opts={})
+      TypeUnparser.unparse(self, opts)
     end
   end
 

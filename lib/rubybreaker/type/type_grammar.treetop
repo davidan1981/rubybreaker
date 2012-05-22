@@ -227,15 +227,16 @@ grammar TypeGrammar
   end
 
   rule nominal_type
-    [a-z_]+ {
+    [a-z_/]+ { # FIXME: not really accurate
       def value      
         pos = RubyBreaker::Position.get()
         pos.col = interval.first
         begin 
           mod_name = RubyBreaker::Util.camelize(text_value)
-          mod = eval mod_name
-          t = RubyBreaker::NominalType.new(mod,pos)
-        rescue
+          mod = eval(mod_name) # do it at the current binding
+          t = RubyBreaker::NominalType.new(mod, pos)
+        rescue => e
+          puts e
           t = RubyBreaker::AnyType.new(pos)
         end
         return t # RubyBreaker::NominalType.new(text_value,pos)
