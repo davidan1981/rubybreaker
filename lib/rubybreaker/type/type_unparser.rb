@@ -15,6 +15,35 @@ module RubyBreaker
 
     private
 
+    # This method resolves the mod_name's namespace with respect to the
+    # namespace. For example, if the current namespace is
+    # 
+    # A::B
+    #
+    # and the given module is A::B::C::D, then we show
+    #
+    # C::D
+    #
+    #
+    # If the current namespace is
+    #
+    # A::B::C
+    #
+    # and the given module is A::B::D::E, then we show
+    #
+    # D::E
+    #
+    def self.resolve_namespace(namespace, mod_name)
+      return mod_name if namespace == nil || namespace.empty?
+      if mod_name.start_with?(namespace)
+        pattern = "^#{namespace}::"
+        return mod_name.sub(/#{pattern}/, "")
+      end
+      tokens = namespace.split("::")
+      return mod_name if tokens.size <= 1
+      return self.resolve_namespace(tokens[0..-2].join("::"), mod_name)
+    end
+
     # This method is used to determine if the inner type of +t+ should be
     # wrapped around a parenthesis. This is for optional type and variable
     # length type.
@@ -37,10 +66,10 @@ module RubyBreaker
     # print method.
     def self.unparse_pp(pp, t, opts={})
       if t.instance_of?(NominalType)
-        if opts[:namespace] 
-          namespace = opts[:namespace].name
-          pattern = "^#{namespace}::"
-          mod_name = t.mod.name.sub(/#{pattern}/, "")
+        if opts[:namespace] && opts[:namespace].name
+          # resolve the namespace for the module/class given the current
+          # namespace
+          mod_name = self.resolve_namespace(opts[:namespace].name, t.mod.name)
         else
           mod_name = t.mod.name
         end

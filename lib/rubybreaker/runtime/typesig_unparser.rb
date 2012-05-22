@@ -5,6 +5,7 @@ module RubyBreaker
 
   module Runtime
 
+    # This module handles unparsing type signatures.
     module TypesigUnparser
 
       include TypeDefs
@@ -77,6 +78,9 @@ module RubyBreaker
         pp.breakable()
       end
 
+      # This method unparses the type information in the specified module,
+      # displaying one or more type signatures for each method that is
+      # monitored during runtime.
       def self.unparse(mod, opts={})
         str = ""
         pp = PrettyPrint.new(str)
