@@ -56,7 +56,6 @@ module RubyBreaker
 
     # There has to be an input file
     if ARGV.length < 1 then 
-      puts "Specify a Ruby program"
       puts option_parser.banner
       exit(1)
     end
