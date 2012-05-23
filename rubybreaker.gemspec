@@ -7,12 +7,14 @@ Gem::Specification.new do |spec|
   spec.bindir = "bin"
   spec.executable = "rubybreaker"
   spec.add_dependency("treetop")
-  spec.description = "RubyBreaker is a dynamic type documentation tool for Ruby."
+  spec.description = "RubyBreaker is a dynamic type documentation tool for Ruby. " +
+                     "It dynamically instruments code, monitors objects during execution, " +
+                     "and generates type documentation based on the profiled information. "
   spec.email = "rubybreaker@gmail.com"
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
   spec.files.reject! {|fn| fn.include?("idraw")}
   spec.has_rdoc = true
-  spec.rdoc_options << "-x" << "lib/rubybreaker/rubylib/core.rb"
+  spec.rdoc_options = ["-x", "lib/rubybreaker/rubylib/core.rb"]
   spec.license = "BSD"
   spec.name = "rubybreaker"
   spec.summary = "Dynamic Type Documentation Tool for Ruby"
