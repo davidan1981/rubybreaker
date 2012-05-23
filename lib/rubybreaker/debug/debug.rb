@@ -11,7 +11,7 @@ module RubyBreaker
   # This sets up the logger for debugging RubyBreaker
   def self.setup_logger #:nodoc:
     return if defined?(LOGGER)
-    out = if (defined?(OPTIONS) && !OPTIONS[:file].empty?)
+    out = if (defined?(OPTIONS) && OPTIONS[:debug] && !OPTIONS[:file].empty?)
           then "#{OPTIONS[:file]}.log"
           else STDOUT
           end
