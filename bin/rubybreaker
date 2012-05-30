@@ -21,6 +21,10 @@ module RubyBreaker
         OPTIONS[:output] = f
       end
 
+      opts.on("-t", "--io_type TYPE", "Input/output type: rubybreaker or rdoc" do |t|
+        OPTIONS[:io_type] = t.downcase
+      end
+
       opts.on("-s","--[no-]stdout","Show output on the screen") do |b|
         OPTIONS[:stdout] = b
       end

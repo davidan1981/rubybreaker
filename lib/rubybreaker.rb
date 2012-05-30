@@ -23,6 +23,7 @@ module RubyBreaker
     :append => true,               # append to the input file (if there is)?
     :stdout => true,               # also display on the screen?
     :rubylib => true,              # include core ruby library documentation?
+    :io_type => :rubybreaker,      # RubyBreaker, RDoc, or YARD?
     :file => nil,                  # the input Ruby program (as typed by the user)
   }
 
