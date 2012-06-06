@@ -3,6 +3,7 @@
 # hosting module (and class) subject to type monitoring. Broken module makes
 # type information of the hosting module accessible.
 
+require "set"
 require_relative "runtime/overrides"
 require_relative "runtime/typesig_parser"
 require_relative "runtime/typesig_unparser"
@@ -11,17 +12,11 @@ require_relative "runtime/inspector"
 
 module RubyBreaker
 
-  # Broken takes higher precedence than Breakable. Once a module is
-  # "declared" to be Broken, it cannot be Breakable. 
-  #
-  # TODO: In future, there will be a hybrid of two to allow documenting of
-  #       methods that are newly introduced in a broken class/module.
+  # This set keeps track of modules/classes that will be monitored.
+  BREAKABLE = Set.new
 
-  # This array lists modules/classes that will be monitored.
-  BREAKABLE = []
-
-  # This array lists "broken" classes--i.e., with type signatures
-  BROKEN = []
+  # This set keeps track of "broken" classes--i.e., with type signatures
+  BROKEN = Set.new
 
   # This module should be included in classes or modules that you want to
   # monitor during runtime. The concept is that once a Breakable module is

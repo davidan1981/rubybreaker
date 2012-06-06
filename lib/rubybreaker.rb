@@ -3,124 +3,263 @@
 # observed at runtime and generates type annotation at the end.  It can be
 # run as either a stand-alone script or as a Ruby library. 
 
+require "set"
+require "optparse"
 require_relative "rubybreaker/debug"
 require_relative "rubybreaker/runtime"
 require_relative "rubybreaker/test"
 
 # RubyBreaker is a dynamic instrumentation and monitoring tool that
-# documents type information automatically.
+# generates type documentation for Ruby programs. 
 module RubyBreaker
+
+  # Options for RubyBreaker
+  #
+  # These can be set via command line options or a Rake test task using
+  # Rake::RubyBrekaerTestTask instance.
+  #
+  OPTIONS = {
+    :debug     => false,       # in debug mode?
+    :style     => :underscore, # type signature style - rdoc or yard
+    :io_file   => nil,         # generate input/output other than default?
+    :append    => true,        # append to the input file (if there is)?
+    :stdout    => true,        # also display on the screen?
+    :rubylib   => true,        # include core ruby library documentation?
+    :verbose   => false,       # in RubyBreaker.verbose mode?
+  }
+
+  # This option parser may be used for the command-line mode or for the
+  # library mode when used with Rakefile. See rubybreaker/task.rb for how
+  # this can be used in the latter.
+  OPTION_PARSER = OptionParser.new do |opts|
+
+    opts.banner = "Usage: #{File.basename(__FILE__)} [options] prog[.rb]" 
+
+    opts.on("--debug", "Run in debug mode") do 
+      OPTIONS[:debug] = true
+    end
+
+    opts.on("--style STYLE", "Select type signature style - underscore or camelize") do |v|
+      OPTIONS[:style] = v.downcase.to_sym
+    end
+
+    opts.on("--io-file FILE","Specify additional I/O files (delimited by :)") do |f|
+      OPTIONS[:io_file] = f
+    end
+
+    opts.on("-s","--[no-]stdout","Show output on the screen") do |b|
+      OPTIONS[:stdout] = b
+    end
+
+    opts.on("-a", "--[no-]append", "Append output to the input file") do |b|
+      OPTIONS[:append] = b
+    end
+
+    opts.on("-v","--verbose","Show messages in detail") do
+      OPTIONS[:verbose] = true
+    end
+
+    opts.on("--[no-]rubylib", "Use Core Ruby Library documentation") do |b|
+      OPTIONS[:rubylib] = b
+    end
+
+    opts.on("-h","--help","Show this help text") do 
+      puts opts
+      exit
+    end
+
+  end
 
   # This constant contains the copyright information.
   COPYRIGHT = "Copyright (c) 2012 Jong-hoon (David) An. All Rights Reserved."
 
-  # Options for RubyBreaker
-  OPTIONS = {
-    :debug => false,               # in debug mode?
-    :verbose => false,             # in RubyBreaker.verbose mode?
-    :mode => :lib,                 # bin or lib?
-    :io_file => nil,               # generate input/output other than default?
-    :append => true,               # append to the input file (if there is)?
-    :stdout => true,               # also display on the screen?
-    :rubylib => true,              # include core ruby library documentation?
-    :io_type => :rubybreaker,      # RubyBreaker, RDoc, or YARD?
-    :file => nil,                  # the input Ruby program (as typed by the user)
-  }
+  # Extension used for files that contain RubyBreaker task information
+  TASK_EXTENSION = "rb"
 
-  # This array lists modules/classes that are actually instrumented with a
-  # monitor.
-  INSTALLED = []
-  
-  # Extension used by RubyBreaker for output/input
-  EXTENSION = "rubybreaker"
+  # Extension used for files that contain type information in YAML format
+  YAML_EXTENSION = "yaml"
 
-  # This module has a set of entry points to the program and misc. methods
-  # for running RubyBreaker.
+  # Extension used for files that contain type information in Ruby format
+  IO_EXTENSION = "rubybreaker.rb"
+
+  # This module has a set of entry points to the program and other methods
+  # for running RubyBreaker in various modes.
   module Main
 
     include TypeDefs
     include Runtime
 
-    public
+    # This set lists modules/classes that are actually instrumented with a
+    # monitor.
+    INSTALLED = Set.new
 
-    # This method is the trigger point to install a monitor in each
-    # module/class.
-    def self.setup()
+    private
 
+    # This method installs a monitor for each breakable module. 
+    def self.instrument()
       BREAKABLE.each do |mod|
-
-        # Remember, RubyBreaker now supports a hybrid of Breakable and
-        # Broken module. Just check if the module has already been
-        # instrumented.
-        unless INSTALLED.include?(mod) 
-          MonitorInstaller.install_module_monitor(mod)
-          INSTALLED << mod
-        end
-
+        # Duplicate checks in place in these calls.
+        MonitorInstaller.install_module_monitor(mod)
+        INSTALLED << mod
       end
-
-      # At the end, we generate an output of the type information.
-      at_exit do 
-        self.output
-      end
-
     end
 
-    # Reads the input file if specified or exists
-    def self.input()
-      return unless OPTIONS[:io_file] && File.exist?(OPTIONS[:io_file])
-      RubyBreaker.verbose("RubyBreaker input file exists...loading")
-      eval "load \"#{OPTIONS[:io_file]}\"", TOPLEVEL_BINDING
-    end
+    # This method determines if RubyBreaker is running as a task.
+    def self.running_as_task?(); return $__rubybreaker_task != nil end
+
+    # This method returns the task currently being run.
+    def self.task(); return $__rubybreaker_task end
 
     # This method will generate the output.
     def self.output()
 
       RubyBreaker.verbose("Generating type documentation")
 
-      io_exist = OPTIONS[:io_file] && File.exist?(OPTIONS[:io_file])
+      # See if this run is from a Rake test task, 
+      if self.running_as_task?()
+        # Use task name to find the IO file.
+        task_name = self.task[:name].to_s
+        io_exist = File.exist?(task_name)
+      else
+        io_exist = OPTIONS[:io_file] && File.exist?(OPTIONS[:io_file])
+      end
 
       code = ""
       # Document each module that was monitored
       INSTALLED.each { |mod| 
         str = Runtime::TypesigUnparser.unparse(mod) 
         code << str
-        if OPTIONS[:mode] == :lib
-          print str
-        end
+        print str if OPTIONS[:stdout] # display on the screen if requested
       }
 
-      # If this was a library mode run, exit now. 
-      return if OPTIONS[:mode] == :lib
-
-      # Append the result to the input file (or create a new file)
-      open(OPTIONS[:io_file],"a") do |f|
-        unless io_exist 
-          f.puts "# This file is auto-generated by RubyBreaker"
-          f.puts "require \"rubybreaker\""
+      if OPTIONS[:io_file]
+        # Append the result to the input file (or create a new file)
+        open(OPTIONS[:io_file],"a") do |f|
+          unless io_exist 
+            f.puts "# This file is auto-generated by RubyBreaker"
+            f.puts "require \"rubybreaker\""
+          end
+          f.print code
         end
-        f.print code
       end
 
       RubyBreaker.verbose("Done generating type documentation")
     end
 
-    # This method will run do things in the following order:
+    # This method allows you to specify which modules/classes to monitor and
+    # automatically make them Breakable or Broken module based on the first
+    # argument.
+    def self.register_modules(breakable_or_broken, *mods)
+      return if mods.size == 0
+      mods.each do |mod|
+        case mod
+        when Array
+          self.register_modules(breakable_or_broken, *mod)
+        when Module, Class
+          mod.include(breakable_or_broken)
+        when String, Symbol
+          begin
+            mod = eval("#{mod}", TOPLEVEL_BINDING)
+            mod.send(:include, breakable_or_broken) if mod
+          rescue NameError => e
+            RubyBreaker.error("#{mod} cannot be found.")
+          end
+        else
+          RubyBreaker.error("You must specify a module/class or its name.")
+        end
+      end
+    end
+
+    # This method registers modules/classes as Breakable (in batch mode)
+    def self.register_as_breakable(*mods)
+      self.register_modules(Breakable, *mods)
+    end
+
+    # This method registers modules/classes as Broken (in batch mode)
+    def self.register_as_broken(*mods)
+      self.register_modules(Broken, *mods)
+    end
+
+    # This method finds input file(s) based on the specified programs or
+    # task name and load them into Ruby. This method will also look at the
+    # --io-file argument (or option) to find additional input files.
+    def self.load_input(prog_or_task=nil)
+      input_files = []
+      if self.running_as_task?()
+        # Then the input should be based on the task name
+        fname = "#{self.task[:name]}.#{IO_EXTENSION}"
+      elsif prog_or_task
+        fname = "#{File.basename(prog_or_task, ".rb")}.#{IO_EXTENSION}"
+      end
+      if fname
+        fname = File.absolute_path(fname)
+        if File.exist?(fname)
+          eval "load \"#{fname}\"", TOPLEVEL_BINDING
+          RubyBreaker.verbose("RubyBreaker input file #{fname} is loaded")
+        end
+      end
+      if (fname = OPTIONS[:io_file])
+        fname = File.absolute_path(fname)
+        if File.exist?(fname)
+          eval "load \"#{fname}\"", TOPLEVEL_BINDING
+          RubyBreaker.verbose("RubyBreaker input file #{fname} is loaded")
+        end
+      end
+    end
+
+    # This method contains the shared code between various run_as_* methods.
+    # This method is supposed to be called after all other configuration
+    # handling.
+    def self.run()
+
+    end
+
+    public
+
+    # This method runs RubyBreaker for a particular test case (class). This
+    # is the RECOMMENDED way to run RubyBreaker.  Running RubyBreaker this
+    # way allows the user to not modify the original program. Rather, he can
+    # setup a Rake task to configure everything needed to run RubyBreaker.
+    #
+    # This is a bit different from running RubyBreaker as a shell program.
+    def self.run_as_testcase()
+      RubyBreaker.setup_logger()
+      RubyBreaker.verbose("Running RubyBreaker within a testcase")
+      if self.running_as_task?()
+        task = self.task
+        OPTION_PARSER.parse(*task[:rubybreaker_opts])
+        self.register_as_breakable(*task[:breakable])
+        self.register_as_broken(*task[:broken])
+      end
+      RubyBreaker.verbose("Done reading task information")
+      self.load_input((task ? task[:name] : nil))
+      Main.instrument()
+      # At the end, we WILL generate an output of the type information.
+      at_exit { self.output }
+      # Note that there is no cutoff point when running as a test case.
+      # Remember, the test case is being run already. So after this method,
+      # the test case will run and type information will be collected.
+    end
+
+    # This method runs RubyBreaker in the _command-line_ mode. It will run
+    # do things in the following order:
     #
     #   * Checks to see if the user program and an input file exists
     #   * Loads the documentation for Ruby Core Library (TODO)
     #   * Reads the input type documentation if any
     #   * Reads (require's) the user program
     #
-    def self.run()
+    def self.run_as_bin()
 
       RubyBreaker.setup_logger()
-      RubyBreaker.verbose("Running RubyBreaker")
+      RubyBreaker.verbose("Running RubyBreaker in command-line mode")
 
-      # First, take care of the program file.
-      argv0 = OPTIONS[:file]
-      prog_file = argv0
-      prog_file = File.expand_path(prog_file)
+      OPTION_PARSER.parse!   # parse the command-line arguments
+      
+      puts COPYRIGHT if OPTIONS[:verbose]     # Show copyright info if verbose
+      show_banner_and_exit() if ARGV.length != 1 # There has to be an input file
+
+      prog_file = File.expand_path(ARGV[0])
 
       # It is ok to omit .rb extension. So try to see if prog_file.rb exists
       if !File.exist?(prog_file) && !File.extname(prog_file) == ".rb" 
@@ -128,31 +267,29 @@ module RubyBreaker
       end 
 
       if !File.exist?(prog_file)
-        fatal("#{argv0} is an invalid file.")
+        fatal("#{ARGV[0]} is an invalid file.")
         exit(1)
       end
 
-      # Then, input/output file if specified
-      if !OPTIONS[:io_file] || OPTIONS[:io_file].empty?
-        OPTIONS[:io_file] = "#{File.basename(argv0, ".rb")}.#{EXTENSION}"
-      end
-      OPTIONS[:io_file] = File.absolute_path(OPTIONS[:io_file])
 
-      if OPTIONS[:rubylib]
-        RubyBreaker.verbose("Loading RubyBreaker's Ruby Core Library documentation")
-        # Load the core library type documentation
-        eval("require \"rubybreaker/rubylib\"", TOPLEVEL_BINDING)
-      end
+      # TODO: redo this code block
+      # if OPTIONS[:rubylib]
+      #   RubyBreaker.verbose("Loading RubyBreaker's Ruby Core Library documentation")
+      #   # Load the core library type documentation
+      #   eval("require \"rubybreaker/rubylib\"", TOPLEVEL_BINDING)
+      # end
 
       # Read the input file first (as it might contain type documentation
       # already)
-      Main.input()
+      Main.load_input(prog_file)
 
       # Finally, require the program file! Let it run! Wheeee!
       eval("require '#{prog_file}'", TOPLEVEL_BINDING)
 
       RubyBreaker.verbose("Done running the input program")
 
+      # At the end, we generate an output of the type information.
+      self.output
     end
 
   end

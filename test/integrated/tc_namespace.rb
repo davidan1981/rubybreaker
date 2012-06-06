@@ -3,7 +3,6 @@ require_relative "../../lib/rubybreaker"
 
 class IntegratedNamespaceTest < Test::Unit::TestCase
   include RubyBreaker
-  include RubyBreaker::TestCase
 
   class A < String
     class C < String

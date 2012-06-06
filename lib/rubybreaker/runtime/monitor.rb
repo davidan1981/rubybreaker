@@ -212,6 +212,12 @@ module RubyBreaker
 
         RubyBreaker.log("Installing module monitor for #{mod}")
 
+        # Do not re-install monitor if already done so.
+        if Breakable::MONITOR_MAP[mod] 
+          RubyBreaker.log("Skip #{mod} as it has a monitor installed.")
+          return
+        end
+
         Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
         Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
 

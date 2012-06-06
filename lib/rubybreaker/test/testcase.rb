@@ -1,38 +1,21 @@
 #--
-# This file mimics the Ruby testing framework. This is provided so that
-# RubyBreaker can be used seamlessly with the traditional Ruby framework
-# (supposedly :) ).
+# This file overrides the test case behavior to work with RubyBreaker behind
+# the scene without requiring the user to modify the code.
 
-module RubyBreaker
+require "test/unit"
 
-  # This module overrides the normal behavior of Ruby Stdlib's TestCase
-  # class. 
-  module TestCase
+# This class is patched to run RubyBreaker along with the test cases.
+class Test::Unit::TestCase
 
-    def self.__rubybreaker_setup()
-      Main.setup()
-    end
+  # Save the original constructor method.
+  alias :__rubybreaker_initialize :initialize
 
-    def self.__rubybreaker_teardown()
-      # Main.output()
-    end
-
-    def self.included(mod)
-
-      # hack to insert RubyBreaker's own setup and teardown methods
-      mod.module_eval <<-EOS
-
-      alias :__run :run
-
-      def run(*args,&blk)
-        RubyBreaker::TestCase.__rubybreaker_setup()
-        __run(*args,&blk)
-        RubyBreaker::TestCase.__rubybreaker_teardown()
-      end
-
-      EOS
-
-    end
+  # This method overrides the original constructor to run RubyBreaker before
+  # calling the original constructor.
+  def initialize(*args, &blk)
+    RubyBreaker::Main.run_as_testcase()
+    return send(:__rubybreaker_initialize, *args, &blk)
   end
+
 end
 

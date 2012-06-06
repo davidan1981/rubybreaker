@@ -5,6 +5,7 @@ require "rake"
 require "rake/testtask"
 require "rdoc/task"
 require "rake/clean"
+require_relative "lib/rubybreaker/task"
 
 begin 
   require "rdiscount"   # used to generate the doc html page
@@ -21,15 +22,20 @@ end
 # Use rake/clean to remove generated files
 CLEAN.concat(FileList["webpage/rdoc", 
                       "rubybreaker-*.gem",
-                      "webpage/index.html", 
-                      "lib/rubybreaker/type/type_grammar.rb"
-                     ])
+                      "webpage/index.html",
+                      "lib/rubybreaker/type/type_grammar.rb"])
 
 # If no task specified, do test
-task :default => [:test]
+task :default => [:test, :testtask_test]
 
 desc "Do all"
-task :all => [:parser, :test, :rspec, :rdoc, :webpage, :gem] do |t|
+task :all => [:parser, 
+              :test, 
+              :testtask_test,
+              :rspec, 
+              :rdoc, 
+              :webpage, 
+              :gem] do |t|
 end
 
 desc "Generate gemspec"
@@ -69,7 +75,15 @@ Rake::TestTask.new(:"test") do |t|
   t.libs << "lib"
   test_files = FileList["test/ts_*.rb"]
   test_files.exclude("test/ts_rspec.rb")
+  test_files.exclude("test/ts_testtask.rb")
   t.test_files = test_files
+end
+
+desc "Run rubybreaker testtask test"
+Rake::RubyBreakerTestTask.new(:"testtask_test") do |t|
+  t.libs << "lib"
+  t.test_files = ["test/testtask/tc_testtask.rb"]
+  t.breakable = ["SampleClassA"]
 end
 
 if defined?(RSpec)

@@ -3,7 +3,6 @@ require_relative "../../lib/rubybreaker"
 
 class IntegratedBothBrokenBreakableTest < Test::Unit::TestCase
   include RubyBreaker
-  include RubyBreaker::TestCase
 
   class A
     include RubyBreaker::Breakable
