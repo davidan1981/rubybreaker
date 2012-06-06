@@ -272,7 +272,9 @@ module RubyBreaker
       end
 
 
-      # TODO: redo this code block
+      # TODO: Commented this. This will be put back once it's ready and once
+      # I figure out how to skip it during the RubyGems doc generation.
+      #
       # if OPTIONS[:rubylib]
       #   RubyBreaker.verbose("Loading RubyBreaker's Ruby Core Library documentation")
       #   # Load the core library type documentation
