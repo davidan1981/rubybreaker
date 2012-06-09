@@ -1,3 +1,7 @@
+# VERSION 0.0.5
+* Rake::RubyBreakerTestTask is supported.
+* Manual modification is no longer required if run as a Rake task.
+
 # VERSION 0.0.4
 * RSpec is supported.
 * Namespace is recognized in type signatures.

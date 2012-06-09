@@ -5,7 +5,6 @@ class IntegratedInheritBrokenTest < Test::Unit::TestCase
   include RubyBreaker
 
   class A
-    include RubyBreaker::Broken
     typesig("foo(fixnum[to_s]) -> string")
     def foo(x); x.to_s end
   end

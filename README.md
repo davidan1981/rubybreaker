@@ -11,23 +11,20 @@ RubyBreaker Runtime Library and can be used in future documentation of the
 program.
 
 The primary goal of RubyBreaker is to assign a type signature to every
-method in designated modules and classes.  A type signature is written in
+method in selected modules and classes.  A type signature is written in
 the RubyBreaker Type Annotation Language which resembles the documentation
 style used in Ruby API Doc. Overall, this tool should help Ruby programmers
-document their code more rigorously and effectively.  Currently, manual
-modification of the user program is required to run RubyBreaker, but this is
-kept minimal. 
+document their code more rigorously and effectively.
 
 To contribute to the project, visit RubyBreaker's
 [GitHub page](http://github.com/rockalizer/rubybreaker) and 
 [RubyGems page](http://rubygems.org/gems/rubybreaker). RubyBreaker RDoc can
 be found in [here](rdoc/index.html).
 
-## Limitations
-
-* Block argument cannot be auto-documented. (Inherent)
-* Manual modification (minimal) of code is required.
-* Parametric polymorphic types are not supported. 
+Current limitations are:
+* Auto-documentation of block arguments (inherent)
+* Parametric polymorphic types
+* RDoc or YARD support
 
 ## Requirements
 
@@ -48,6 +45,16 @@ You probably want to test out your installation by running
 
     $ rake test
 
+To test additional tests, you can run Rakefile without any parameter:
+
+    $ rake 
+
+If you want to create a web version of this document as well as rdoc in your
+local drive, do the following:
+
+    $ rake all
+    $ open webpage/index.html
+
 * * *
 
 # Tutorial
@@ -57,20 +64,28 @@ Type Annotation Language, and the RubyBreaker Type System.
 
 ## Usage
 
-There are two ways to use RubyBreaker:
+It is now recommended that RubyBreaker is run in a Rakefile as a test task
+using `Rake::RubyBreakerTestTask`. However, it can still be used as a shell
+program or a library as before. For instance,
 
     $ rubybreaker prog.rb
    
-Or, use it as a Ruby library and just run the program on Ruby.
+will run RubyBreaker on `prog.rb`. Or, use it as a Ruby library and just
+run the program on Ruby.
 
     $ ruby prog.rb
 
-Both methods require manual modification of the code, but the former will
-generate the output into a separate `.rubybreaker` file whereas the latter
-will display the output on the screen. The former will also automatically
-import the `.rubybreaker` file for the user program of which the output is
-appended at the end. Consequently, this output/input file will grow as more
-analysis is done on the program. 
+Note that the latter two methods still require manual modification of code.
+If RubyBreaker is run in a Rakefile as a test task, this modification is no
+longer required. As a result, this tutorial no longer describe this process
+anymore. Refer to ? for more details.
+
+but the former
+will generate the output into a separate `.rubybreaker` file whereas the
+latter will display the output on the screen. The former will also
+automatically import the `.rubybreaker` file for the user program of which
+the output is appended at the end. Consequently, this output/input file will
+grow as more analysis is done on the program. 
 
 For example, let us assume `prog.rb` as the following:
 

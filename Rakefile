@@ -81,7 +81,7 @@ end
 
 desc "Run rubybreaker testtask test"
 Rake::RubyBreakerTestTask.new(:"testtask_test") do |t|
-  t.libs << "lib"
+  t.libs << "lib" << "test/tc_testtask/sample.rb"
   t.test_files = ["test/testtask/tc_testtask.rb"]
   t.breakable = ["SampleClassA"]
 end

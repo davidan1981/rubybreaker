@@ -7,7 +7,6 @@ class RSpecTestA
 end
 
 class RSpecTestB
-  include RubyBreaker::Broken
   typesig("foo(fixnum[to_s]) -> string")
 end
 

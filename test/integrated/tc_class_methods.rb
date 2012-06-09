@@ -1,21 +1,21 @@
 require "test/unit"
 require_relative "../../lib/rubybreaker"
 
+class A
+  def self.foo(x); x.to_s end
+end
+
+class B
+  class << self
+    typesig("bar(fixnum[to_s]) -> string")
+    def bar(x); x.to_s end
+  end
+end
+
+RubyBreaker.breakable(A, B)
+
 class IntegratedClassMethodsTest < Test::Unit::TestCase
   include RubyBreaker
-
-  class A
-    include RubyBreaker::Breakable
-    def self.foo(x); x.to_s end
-  end
-
-  class B
-    include RubyBreaker::Broken
-    class << self
-      typesig("bar(fixnum[to_s]) -> string")
-      def bar(x); x.to_s end
-    end
-  end
 
   def test_class_methods
     A.foo(1)

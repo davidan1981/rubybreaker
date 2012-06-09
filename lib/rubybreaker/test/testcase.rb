@@ -13,7 +13,9 @@ class Test::Unit::TestCase
   # This method overrides the original constructor to run RubyBreaker before
   # calling the original constructor.
   def initialize(*args, &blk)
-    RubyBreaker::Main.run_as_testcase()
+    if !RubyBreaker::Main.running_as_task?
+      RubyBreaker::Main.run()
+    end
     return send(:__rubybreaker_initialize, *args, &blk)
   end
 

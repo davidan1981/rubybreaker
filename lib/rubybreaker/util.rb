@@ -27,17 +27,6 @@ module RubyBreaker
         lower_case_and_underscored_word.to_s[0].chr.downcase + camelize(lower_case_and_underscored_word)[1..-1]
       end   
     end    
-
-    # Below classes are used for internal testing 
-    
-    class ::SampleClassA
-      def foo(x); x.to_s end
-    end
-
-    class ::SampleClassB
-      def foo(x); x.to_s end
-    end
-
   end
 
 end

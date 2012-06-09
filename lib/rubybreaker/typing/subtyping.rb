@@ -9,7 +9,7 @@
 # any constraint graph to resolve subtype relations. This is the main
 # difference between Rubydust and RubyBreaker. 
 #
-# If a module is not Broken but is Breakable (i.e., monitored), then it is
+# If a module is not broken but is breakable (i.e., monitored), then it is
 # treated as non-Broken. At the end of the execution, the module will be
 # Broken--i.e., its type information is now revealed. If the user wishes to
 # use the result of the analysis, this type information will be documented
@@ -56,6 +56,11 @@ module RubyBreaker
     include TypeDefs
 
     private
+
+    # This method determins if the module/class has its corresponding 
+    def self.has_type_map?(mod)
+      return Runtime::TYPE_MAP[mod] != nil
+    end
 
     # Thie method checks if the module has all the methods specified in
     # meths array
@@ -295,11 +300,11 @@ module RubyBreaker
     #
     def self.fusion_subtype_rel?(lhs,rhs)
       return false unless lhs.kind_of?(FusionType)
-      if lhs.mod.kind_of?(Broken)        
+      if self.has_type_map?(lhs.mod)
         if rhs.instance_of?(NominalType) # don't include self type
           if RubyTypeUtils.subclass_rel?(lhs.mod, rhs.mod)
             is_subtype = true
-          elsif rhs.mod.kind_of?(Broken)
+          elsif self.has_type_map?(rhs.mod)
             # then do a type check for each method
             lhs_meths = Inspect.inspect_all(lhs.mod)
             rhs_meths = Inspect.inspect_all(rhs.mod)
@@ -311,7 +316,7 @@ module RubyBreaker
         elsif rhs.instance_of?(FusionType)
           if RubyTypeUtils.subclass_rel?(lhs.mod, rhs.mod)
             is_subtype = true
-          elsif rhs.mod.kind_of?(Broken)
+          elsif self.has_type_map?(rhs.mod)
             # then do a type check for each method
             lhs_meths = Inspect.inspect_all(lhs.mod)
             rhs_meths = Inspect.inspect_meths(rhs.mod, lhs.meths.keys)
@@ -377,7 +382,7 @@ module RubyBreaker
         # If RHS is not broken, sorry no subtype relationship
         if RubyTypeUtils.subclass_rel?(lhs.mod, rhs.mod)
           is_subtype = true
-        elsif lhs.kind_of?(Broken) && rhs.kind_of?(Broken)
+        elsif self.has_type_map?(lhs.mod) && self.has_type_map?(rhs.mod)
           is_subtype = true
           lhs_methods = lhs.mod.instance_methods
           rhs.meth_names.each {|m| 

@@ -6,7 +6,7 @@ module RubyBreaker
   module Runtime
 
     # This module handles unparsing type signatures.
-    module TypesigUnparser
+    module TypeSigUnparser
 
       include TypeDefs
 
@@ -51,9 +51,6 @@ module RubyBreaker
         
         pp.text("#{keyword} #{mod.to_s}", 80)
         pp.nest(2) do 
-          pp.breakable("")
-          pp.text("include RubyBreaker::Broken", 80)
-
           # See if there is any class method to show
           eigen = Runtime.eigen_class(mod)
           if !DOCUMENTED.include?(eigen)

@@ -1,14 +1,12 @@
 #--
 # This file contains the core of the runtime framework which injects the
-# monitoring code into Breakable classes/modules and actually monitors the
+# monitoring code into breakable classes/modules and actually monitors the
 # instances of those classes/modules at runtime. It also provides some utility
 # functions for later use (after runtime).
 
 dir = File.dirname(__FILE__) 
 require_relative "util"
 require_relative "../debug"
-require_relative "type_placeholder"
-require_relative "pluggable"
 require_relative "type_system"
 
 module RubyBreaker
@@ -132,11 +130,11 @@ module RubyBreaker
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
         # mm = get_module_monitor(mod) unless is_obj_mod
-        mm = Breakable::MONITOR_MAP[mod] 
+        mm = MONITOR_MAP[mod] 
 
         # There is something wrong if there isn't a module monitor
         # associated with the call.
-        # raise Exception if mm == nil || !mm.meth_type_map.include?(meth_name)
+        # raise Exception if mm == nil || !mm.include?(meth_name)
 
         meth_info = MethodInfo.new(meth_name, args, blk, nil)
 
@@ -213,29 +211,29 @@ module RubyBreaker
         RubyBreaker.log("Installing module monitor for #{mod}")
 
         # Do not re-install monitor if already done so.
-        if Breakable::MONITOR_MAP[mod] 
+        if MONITOR_MAP[mod] 
           RubyBreaker.log("Skip #{mod} as it has a monitor installed.")
           return
         end
 
-        Breakable::MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
-        Breakable::TYPE_PLACEHOLDER_MAP[mod] = TypePlaceholder.new
+        MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
 
-        meth_type_map = []
+        # Create the type map if it does not exist already. Remember, this
+        # map could have been made by typesig().
+        TYPE_MAP[mod] = {} unless TYPE_MAP[mod]
+
+        # Get the list of instance methods but do not include inherited
+        # methods. Those are part of the owner's not this module.
         meths = mod.instance_methods(false)  
 
-        # RubyBreaker now supports the hybrid of Breakable and Broken. Here,
-        # see if any methods are already broken.
-        broken_meth_type_map = Inspector.inspect_all(mod)
-        broken_meths = broken_meth_type_map.keys
+        # See if any method is already broken (explicitly typesig'ed)
+        broken_mt_map = Inspector.inspect_all(mod)
+        broken_meths = broken_mt_map.keys
 
         meths.each do |m| 
-          # As long as the method is not "Broken" yet, it is considered
-          # Breakable (if the module is declared to be Breakable).
-          unless broken_meths.include?(m)
-            self.rename_meth(mod,m) 
-          end 
+          self.rename_meth(mod,m) unless broken_meths.include?(m)
         end
+
       end
 
     end

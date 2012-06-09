@@ -96,7 +96,7 @@ module RubyBreaker
     class SelfType < NominalType
 
       # This is a setter method for class variable mod. 
-      # NOTE: It is set every time Broken module is included.
+      # NOTE: It is set every time typesig() is called
       def self.set_self(mod)
         @@mod = mod
       end

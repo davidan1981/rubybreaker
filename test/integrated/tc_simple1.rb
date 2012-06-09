@@ -32,7 +32,6 @@ class IntegratedSimpleTest < Test::Unit::TestCase
   end
 
   class B
-    include RubyBreaker::Broken
     typesig("baz(string[size], true_class) -> fixnum")
     typesig("baz(string[to_s], false_class) -> string")
     def baz(x,b); end

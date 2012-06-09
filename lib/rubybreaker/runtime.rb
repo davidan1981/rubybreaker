@@ -1,8 +1,6 @@
 #--
-# This file defines Breakable and Broken module. Breakable module makes the
-# hosting module (and class) subject to type monitoring. Broken module makes
-# type information of the hosting module accessible.
-
+# This file provides two methods breakable() and broken() that declares a
+# module/class to be monitored
 require "set"
 require_relative "runtime/overrides"
 require_relative "runtime/typesig_parser"
@@ -12,116 +10,72 @@ require_relative "runtime/inspector"
 
 module RubyBreaker
 
-  # This set keeps track of modules/classes that will be monitored.
-  BREAKABLE = Set.new
+  module Runtime
 
-  # This set keeps track of "broken" classes--i.e., with type signatures
-  BROKEN = Set.new
+    # This set keeps track of modules/classes that will be monitored.
+    BREAKABLES = Set.new
 
-  # This module should be included in classes or modules that you want to
-  # monitor during runtime. The concept is that once a Breakable module is
-  # monitored and its type documentation is generated, the module now becomes
-  # a Broken module. The actual implementation is a simple trigger that 
-  # queues the target module into the list of modules to monitor. The queued
-  # modules are then modified to be monitored dynamically.
-  module Breakable
+    # This hash maps a module to a nested hash that maps a method name to a
+    # method type. This hash is shared between breakable modules/classes and
+    # non-breakable modules/classes.
+    TYPE_MAP = {} # module => {:meth_name => type}
 
-    TYPE_PLACEHOLDER_MAP = {} # module => type_placeholder
-    MONITOR_MAP = {}          # module => monitor
+    # This hash maps a (breakable) module to a type monitor
+    MONITOR_MAP = {}  # module => monitor
 
-    # Simply keep track of this module and its eigen class so they are
-    # monitored later on.
-    def self.included(mod)
-      BREAKABLE << mod
-      BREAKABLE << Runtime.eigen_class(mod)
+    # This set lists modules/classes that are actually instrumented with a
+    # monitor.
+    INSTALLED = Set.new
+
+    # This method installs a monitor for each breakable module. 
+    def self.instrument()
+      BREAKABLES.each do |mod|
+        # Duplicate checks in place in these calls.
+        MonitorInstaller.install_module_monitor(mod)
+        INSTALLED << mod
+      end
+    end
+
+    # This mothod registers one or more module as breakable. This has to be
+    # called at the top level in order to be effective during test.
+    def self.breakable(*mods)
+      mods.each do |mod|
+        case mod
+        when Array
+          self.breakable(*mod)
+        when Module, Class
+          BREAKABLES << mod
+          BREAKABLES << self.eigen_class(mod)
+        when String, Symbol
+          begin
+            mod = eval("#{mod}", TOPLEVEL_BINDING)
+            self.breakable(mod) if mod
+          rescue NameError => e
+            RubyBreaker.error("#{mod} cannot be found.")
+          end
+        else
+          RubyBreaker.error("You must specify a module/class or its name.")
+        end
+      end
     end
 
   end
 
-  # This module is included for "broken" classes.
-  module Broken
+  # This method just redirects to Runtime's method.
+  def self.breakable(*mods)
+    Runtime.breakable(*mods)
+  end
 
-    include TypeDefs
-    include Runtime
-
-    TYPE_PLACEHOLDER_MAP = {} # module => type_placeholder
- 
-    #-
-    # This module will be "extended" to the eigen class of the class that 
-    # includes Broken module. This allows the eigen class to call 'typesig' 
-    # method to parse the type signature dynamically.
-    # 
-    # Usage:
-    #   Class A
-    #     include RubyBreaker::Broken
-    #
-    #     typesig("foo(fixnum) -> fixnum")
-    #     def foo(x) ... end
-    #   end
-    #
-    module BrokenEigen
-
-      include TypeDefs
-      include Runtime
-
-      # This method can be used at the eigen level of the target module to
-      # specify the type of a method.
-      def typesig(str)
-
-        # This MUST BE set for self type to work in type signatures.
-        TypeDefs::SelfType.set_self(self) 
-
-        t = TypeSigParser.parse(str)
-        placeholder = TYPE_PLACEHOLDER_MAP[self]
-        if placeholder
-          meth_type = placeholder.meth_type_map[t.meth_name]
-          if meth_type
-            # TODO: make a method list
-            if meth_type.instance_of?(MethodListType)
-              meth_type.types << t
-            else
-              # then upgrade it
-              placeholder.meth_type_map[t.meth_name] = 
-                  MethodListType.new([meth_type, t])
-            end
-          else
-            placeholder.meth_type_map[t.meth_name] = t
-          end
-        end
-        return t
-      end
-   
-    end
-   
-    # This method is triggered when Broken module is included. This just 
-    # extends BrokenEigen into the target module so "typesig" method can be
-    # called from the eigen level of the module. It also extends the eigen
-    # class of the target module so that "typesig" can work for class
-    # methods too.
+  module Breakable  #:deprecated#
     def self.included(mod)
-
-      # Add to the list of broken modules
-      BROKEN << mod
-
-      # Create if there is no type placeholder for this module yet
-      placeholder = TYPE_PLACEHOLDER_MAP[mod] 
-      if !placeholder 
-        placeholder = TypePlaceholder.new()
-        TYPE_PLACEHOLDER_MAP[mod] = placeholder
-      end
-      mod.extend(BrokenEigen)
-
-      # Support up to one eigen level to support class methods
-      eigen_class = Runtime.eigen_class(mod)
-      BROKEN << eigen_class
-      placeholder = TYPE_PLACEHOLDER_MAP[eigen_class] 
-      if !placeholder 
-        placeholder = TypePlaceholder.new()
-        TYPE_PLACEHOLDER_MAP[eigen_class] = placeholder
-      end
-      eigen_class.extend(BrokenEigen)
+      Runtime.breakable(mod)
     end
-    
+  end
+
+  module Broken #:deprecated#
+    def self.included(mod)
+      # Runtime.broken(mod)
+    end
   end
 
 end

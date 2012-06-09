@@ -7,10 +7,10 @@
 
 require_relative "util"
 require_relative "object_wrapper"
-require_relative "type_placeholder"
 require_relative "../type"
 require_relative "../typing"
 require_relative "../debug"
+require_relative "pluggable"
 
 module RubyBreaker
 
@@ -176,7 +176,7 @@ module RubyBreaker
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
-        meth_type_map = Breakable::TYPE_PLACEHOLDER_MAP[mod].meth_type_map
+        meth_type_map = TYPE_MAP[mod]
 
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
@@ -244,10 +244,8 @@ module RubyBreaker
 
         RubyBreaker.log("In module monitor_after #{meth_name}")
 
-        meth_type_map = Breakable::TYPE_PLACEHOLDER_MAP[mod].meth_type_map
-
         # Compute the least upper bound
-        lub(obj, meth_type_map,meth_name,retval,*args,&blk)
+        lub(obj, TYPE_MAP[mod],meth_name,retval,*args,&blk)
 
         if obj == retval  
           # It is possible that the method receiver is a wrapped object if

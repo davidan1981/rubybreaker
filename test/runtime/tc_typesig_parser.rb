@@ -9,7 +9,6 @@ class TypeSigTest < Test::Unit::TestCase
   include RubyBreaker
   
   class A
-    include RubyBreaker::Broken
     typesig("foo(fixnum) -> fixnum")
     typesig("bar(fixnum) -> self")
   end

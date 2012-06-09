@@ -8,7 +8,6 @@ class TypingTest < Test::Unit::TestCase
   include RubyBreaker
 
   class A
-    include RubyBreaker::Broken
     typesig("foo(fixnum) -> fixnum")
     typesig("bar(fixnum) {|fixnum| -> string} -> string")
     typesig("baz(fixnum, string?) -> fixnum")
@@ -100,14 +99,14 @@ class TypingTest < Test::Unit::TestCase
     assert(t1.subtype_of?(t2), msg(t1, t2))
     assert(t2.subtype_of?(t1), msg(t1, t2))
     # XXX: The following assert will succeed because Fixnum and String are
-    # not Broken at this point.
+    # not "broken" at this point.
     assert(t1.subtype_of?(t3), msg(t1, t3, true))
   end
 
   def test_duck_fusion_types()
     t1 = DuckType.new([:to_s, :to_f])
     t2 = FusionType.new(NominalType.new(Fixnum), [:to_f, :to_s])
-    # Again, this works because Fixnum is not Broken yet 
+    # Again, this works because Fixnum is not "broken" yet 
     assert(t1.subtype_of?(t2), msg(t1, t2))
     assert(t2.subtype_of?(t1), msg(t1, t2))
   end

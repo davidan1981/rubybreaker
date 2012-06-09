@@ -1,6 +1,6 @@
 #--
 # This file defines the type inspector which fetches the type information
-# gathered or documented in a Breakable, Broken, or hybrid module.
+# gathered or documented in a class.
 
 require_relative "util"
 require_relative "monitor"
@@ -9,26 +9,14 @@ module RubyBreaker
 
   module Runtime
   
-    # This module inspects a Breakable module, a Broken module, or a hybrid
-    # module to fetch the type information for each method.
+    # This module inspects type information gathered so far.
     module Inspector
       
       # This method inspects the module for the type of the specified
-      # method. It returns the method type or method list type for the given
-      # method, by looking at, first, the placeholder for the Breakable
-      # side of the module, and then, the placeholder for the Broken side of
-      # the module. If no method exists or if there is no type information
-      # for the method, it returns nil.
+      # method.
       def self.inspect_meth(mod, mname)
         mname = mname.to_sym 
-        if Breakable::TYPE_PLACEHOLDER_MAP.has_key?(mod)
-          placeholder = Breakable::TYPE_PLACEHOLDER_MAP[mod]
-        end
-        t = placeholder.meth_type_map[mname] if placeholder
-        if !t && Broken::TYPE_PLACEHOLDER_MAP.has_key?(mod)
-          placeholder = Broken::TYPE_PLACEHOLDER_MAP[mod]
-          t = placeholder.meth_type_map[mname] if placeholder
-        end
+        t = TYPE_MAP[mod][mname] if TYPE_MAP.has_key?(mod)
         return t
       end
 
@@ -52,18 +40,8 @@ module RubyBreaker
       # containing (method name, method type) pairs.
       def self.inspect_all(mod)
         mtypes = {}
-        mm = Breakable::TYPE_PLACEHOLDER_MAP[mod]
-        if mm
-          mm.meth_type_map.each_pair {|im,mtype|
-            mtypes[im] = mtype if mtype 
-          }
-        end
-        mm = Broken::TYPE_PLACEHOLDER_MAP[mod]
-        if mm
-          mm.meth_type_map.each_pair {|im,mtype|
-            mtypes[im] = mtype if mtype 
-          }
-        end
+        mm = TYPE_MAP[mod]
+        mm.each_pair {|im,mtype| mtypes[im] = mtype if mtype } if mm
         return mtypes
       end 
       
