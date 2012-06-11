@@ -13,7 +13,8 @@ module RubyBreaker
   module Runtime
 
     # This set keeps track of modules/classes that will be monitored.
-    BREAKABLES = Set.new
+    # *DEPRECATED* : Use +breakable+ method instead.
+    BREAKABLES = Set.new 
 
     # This hash maps a module to a nested hash that maps a method name to a
     # method type. This hash is shared between breakable modules/classes and
@@ -28,7 +29,8 @@ module RubyBreaker
     INSTALLED = Set.new
 
     # This method installs a monitor for each breakable module. 
-    def self.instrument()
+    # *DEPRECATED*: Use +breakable()+ method instead.
+    def self.instrument() 
       BREAKABLES.each do |mod|
         # Duplicate checks in place in these calls.
         MonitorInstaller.install_module_monitor(mod)
@@ -36,18 +38,21 @@ module RubyBreaker
       end
     end
 
-    # This mothod registers one or more module as breakable. This has to be
-    # called at the top level in order to be effective during test.
+    # This method modifies specified modules/classes at the very moment
+    # (instead of registering them for later).
     def self.breakable(*mods)
       mods.each do |mod|
         case mod
         when Array
           self.breakable(*mod)
         when Module, Class
-          BREAKABLES << mod
-          BREAKABLES << self.eigen_class(mod)
+          MonitorInstaller.install_module_monitor(mod)
+          eigen_class = self.eigen_class(mod)
+          MonitorInstaller.install_module_monitor(eigen_class)
+          INSTALLED << mod << eigen_class
         when String, Symbol
           begin
+            # Get the actual module and install it right now
             mod = eval("#{mod}", TOPLEVEL_BINDING)
             self.breakable(mod) if mod
           rescue NameError => e
@@ -58,7 +63,10 @@ module RubyBreaker
         end
       end
     end
+  end
 
+  # *DEPRECATED*: Use +RubyBreaker.run()+ to indicate the point of entry.
+  def self.monitor()
   end
 
   # This method just redirects to Runtime's method.
@@ -66,16 +74,18 @@ module RubyBreaker
     Runtime.breakable(*mods)
   end
 
-  module Breakable  #:deprecated#
+  # *DEPRECATED*: Use +Runtime.breakable()+ or +RubyBreaker.run()+ method
+  #               instead.
+  module Breakable  
     def self.included(mod)
-      Runtime.breakable(mod)
+      Runtime::BREAKABLES << mod << Runtime.eigen_class(mod)
     end
   end
 
-  module Broken #:deprecated#
+  # *DEPRECATED*: It has no effect.
+  module Broken 
     def self.included(mod)
       # Runtime.broken(mod)
     end
   end
-
 end

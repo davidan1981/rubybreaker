@@ -16,10 +16,13 @@ class IntegratedNamespaceTest < Test::Unit::TestCase
   end
 
   class B
-    include RubyBreaker::Breakable
     def foo(x); x.to_s end
     def bar(x); x.to_s end
     def baz(x); x.to_s end
+  end
+
+  def setup()
+    RubyBreaker.breakable(B)
   end
 
   def test_namspace_b_foo

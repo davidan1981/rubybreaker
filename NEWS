@@ -1,6 +1,7 @@
 # VERSION 0.0.5
 * Rake::RubyBreakerTestTask is supported.
 * Manual modification is no longer required if run as a Rake task.
+* Deprecating Breakable and Broken modules. Use breakable() method instead.
 
 # VERSION 0.0.4
 * RSpec is supported.

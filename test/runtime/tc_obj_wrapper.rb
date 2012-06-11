@@ -16,6 +16,16 @@ class ObjectWrapperTest < Test::Unit::TestCase
     x.to_s
   end
 
+  def baz(x)
+    x.send(:foo,1)
+  end
+
+  class A
+    def foo(x)
+      x.to_s
+    end
+  end
+
   def test_empty()
     x = 42
     wrapped_x = Runtime::ObjectWrapper.new(x)
@@ -24,26 +34,35 @@ class ObjectWrapperTest < Test::Unit::TestCase
     assert_equal("fixnum[]",str)
   end
 
-  def test_simple_foo()
+  def setup
+    Runtime::GLOBAL_MONITOR_SWITCH.turn_on()
+  end
+
+  def test_foo()
     x = 42
     wrapped_x = Runtime::ObjectWrapper.new(x)
-    Runtime::GLOBAL_MONITOR_SWITCH.turn_on()
     foo(wrapped_x)
-    Runtime::GLOBAL_MONITOR_SWITCH.turn_off()
     type = wrapped_x.__rubybreaker_type()
     str = TypeUnparser.unparse(type)
     assert_equal("fixnum[to_f, to_s]",str)
   end
 
-  def test_simple_bar()
+  def test_bar()
     x = 42
     wrapped_x = Runtime::ObjectWrapper.new(x)
-    Runtime::GLOBAL_MONITOR_SWITCH.turn_on()
     bar(wrapped_x)
-    Runtime::GLOBAL_MONITOR_SWITCH.turn_off()
     type = wrapped_x.__rubybreaker_type()
     str = TypeUnparser.unparse(type)
     assert_equal("fixnum[to_f, to_s]",str)
+  end
+
+  def test_baz()
+    x = A.new
+    wrapped_x = Runtime::ObjectWrapper.new(x)
+    baz(wrapped_x)
+    type = wrapped_x.__rubybreaker_type()
+    str = TypeUnparser.unparse(type)
+    assert_equal("object_wrapper_test/a[foo]", str)
   end
 
   def test_object_id()

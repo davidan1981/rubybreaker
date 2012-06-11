@@ -5,13 +5,14 @@ class IntegratedMethodMissingTest < Test::Unit::TestCase
   include RubyBreaker
 
   class A
-    include RubyBreaker::Breakable
-
     def method_missing(mname, *args, &blk)
       method_name = mname.to_s
       return method_name + "_" + args.join("_") 
     end
-
+  end
+  
+  def setup()
+    RubyBreaker.breakable(A)
   end
 
   # TODO: This must be fixed once variable length argument type is supported

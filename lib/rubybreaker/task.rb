@@ -33,7 +33,7 @@ module Rake
     def initialize(taskname="", *args, &blk)
 
       # Initialize extra instance variables
-      @rubybreaker_opts = nil
+      @rubybreaker_opts = []
       @breakable = nil
 
       # Call the original constructor first

@@ -9,7 +9,7 @@ if defined?(RSpec)
 end
 
 def describe(*args,&blk)
-  RubyBreaker::Main.run if defined?(RubyBreaker) 
+  RubyBreaker.run if defined?(RubyBreaker) 
   send(:"#{RUBYBREAKER_RSPEC_PREFIX}_describe", *args, &blk)
 end
 

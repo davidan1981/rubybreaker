@@ -8,6 +8,12 @@ require_relative "context"
 
 module RubyBreaker
 
+  # This method returns true if the logger is already created and false
+  # otherwise.
+  def self.defined_logger?()
+    return defined?(LOGGER)
+  end
+
   # This sets up the logger for debugging RubyBreaker
   def self.setup_logger #:nodoc:
     return if defined?(LOGGER)

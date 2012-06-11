@@ -70,11 +70,16 @@ module RubyBreaker
       def method_missing(mname,*args,&blk)
         ::RubyBreaker.log("Method_missing for #{mname}")
         if GLOBAL_MONITOR_SWITCH.switch
+          # Must handle send method specially (do not track them)
+          if [:"__send__", :send].include?(mname)
+            mname = args[0]
+            args = args[1..-1]
+          end
           @__rubybreaker_type.add_meth(mname)
-          retval =  @__rubybreaker_obj.send(mname,*args,&blk)
+          retval =  @__rubybreaker_obj.send(mname, *args, &blk)
           retval = ObjectWrapper.new(retval)
         else
-          retval = @__rubybreaker_obj.send(mname,*args,&blk)
+          retval = @__rubybreaker_obj.send(mname, *args, &blk)
         end
         return retval
       end

@@ -5,10 +5,14 @@ class IntegratedBothBrokenBreakableTest < Test::Unit::TestCase
   include RubyBreaker
 
   class A
-    include RubyBreaker::Breakable
+    # include RubyBreaker::Breakable
     typesig("foo(fixnum[to_s]) -> string") 
     def foo(x); x.to_s end
     def bar(x); x.to_sym end
+  end
+
+  def setup
+    RubyBreaker.breakable(A)
   end
 
   def test_both_broken_and_breakable

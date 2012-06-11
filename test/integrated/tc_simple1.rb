@@ -5,7 +5,6 @@ class IntegratedSimpleTest < Test::Unit::TestCase
   include RubyBreaker
 
   class A
-    include RubyBreaker::Breakable
 
     def foo(x)
       x.to_s
@@ -35,6 +34,10 @@ class IntegratedSimpleTest < Test::Unit::TestCase
     typesig("baz(string[size], true_class) -> fixnum")
     typesig("baz(string[to_s], false_class) -> string")
     def baz(x,b); end
+  end
+
+  def setup()
+    RubyBreaker.breakable(A)
   end
 
   def test_simple1_a_foo

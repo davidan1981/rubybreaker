@@ -9,7 +9,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency("treetop")
   spec.description = "RubyBreaker is a dynamic type documentation tool for Ruby. " +
                      "It dynamically instruments code, monitors objects during execution, " +
-                     "and generates type documentation based on the profiled information. "
+                     "and generates type documentation based on the profiled information. " +
+                     "In other words, RubyBreaker \"breaks\" Ruby code out of its " +
+                     "obscurity and wildness (as in \"code breaking\" or \"horse breaking\") " +
+                     "by auto-documenting type information."
   spec.email = "rubybreaker@gmail.com"
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
   spec.files.reject! {|fn| fn.include?("idraw")}

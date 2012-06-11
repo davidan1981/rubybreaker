@@ -10,8 +10,11 @@ class IntegratedInheritBrokenTest < Test::Unit::TestCase
   end
 
   class B < A
-    include RubyBreaker::Breakable
     def bar(x); foo(x) end
+  end
+
+  def setup()
+    RubyBreaker.breakable(B)
   end
 
   def test_both

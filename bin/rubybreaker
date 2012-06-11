@@ -4,18 +4,53 @@ require_relative "../lib/rubybreaker"
 module RubyBreaker
 
   # This method shows the banner and exits with code 1.
-  def show_banner_and_exit()
+  def self.show_banner_and_exit()
     puts OPTION_PARSER.banner
     exit(1)
   end
 
-  # This method is the main method for running RubyBreaker as a shell
-  # program.
+  # This method prepares shell mode execution of RubyBreaker.
   def self.main()
-    Main.run_as_bin() # Just redirect to this this method
+    RubyBreaker.setup_logger()
+    RubyBreaker.verbose("Running RubyBreaker in shell mode")
+
+    # parse the command-line arguments
+    OPTION_PARSER.parse!   
+
+    # Show copyright info if verbose
+    puts COPYRIGHT if OPTIONS[:verbose]     
+
+    # Quit if there is program specified.
+    self.show_banner_and_exit() if ARGV.length != 1
+
+    # Get the specified program.
+    prog = ARGV[0]
+    prog_file = File.expand_path(prog)
+
+    # It is ok to omit .rb extension. So try to see if prog_file.rb exists
+    if !File.exist?(prog_file) && !File.extname(prog_file) == ".rb" 
+      prog_file = "#{prog_file}.rb"
+    end 
+
+    # Quit the specified program does not exist.
+    if !File.exist?(prog_file)
+      fatal("#{ARGV[0]} is an invalid file.")
+      exit(1)
+    end
+
+    # Remember the program path for later use
+    OPTIONS[:prog_file] = prog_file
+
+    # Run the program file!
+    self.verbose("Running #{prog}")
+    eval "require '#{prog_file}'", TOPLEVEL_BINDING
+    self.verbose("Done running #{prog}")
+
+    # Keep in mind that the source program must specify the entry
+    # point--using RubyBreaker.run()--in order to observe the type
+    # information.
   end
 
 end
 
 RubyBreaker.main()
-

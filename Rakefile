@@ -23,6 +23,7 @@ end
 CLEAN.concat(FileList["webpage/rdoc", 
                       "rubybreaker-*.gem",
                       "webpage/index.html",
+                      "*.rubybreaker.rb",
                       "lib/rubybreaker/type/type_grammar.rb"])
 
 # If no task specified, do test
@@ -46,7 +47,7 @@ end
 Rake::RDocTask.new do |rd|
   rd.rdoc_dir = "#{File.dirname(__FILE__)}/webpage/rdoc"
   rd.rdoc_files.include("lib/**/*.rb")
-  rd.rdoc_files.exclude("lib/rubybreaker/rubylib/*.rb", "lib/rubybreaker/type/type_grammar.rb")
+  rd.rdoc_files.exclude("lib/rubybreaker/type/type_grammar.rb")
 end
 
 desc "Generate the webpage"
