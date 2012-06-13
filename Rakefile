@@ -19,6 +19,16 @@ rescue LoadError => e
   puts "[WARNING] No rspec-core is installed on this computer."
 end
 
+# This method generates html pages with header and footer.
+def gen_page(md_file, html_file)
+  dir = File.dirname(__FILE__)
+  header = File.read("#{dir}/webpage/header.html")
+  footer = File.read("#{dir}/webpage/footer.html")
+  body = RDiscount.new(File.read(md_file)).to_html
+  html = header + body + footer
+  File.open(html_file, "w") { |f| f.write(html) }
+end
+
 # Use rake/clean to remove generated files
 CLEAN.concat(FileList["webpage/rdoc", 
                       "rubybreaker-*.gem",
@@ -48,19 +58,17 @@ Rake::RDocTask.new do |rd|
   rd.rdoc_dir = "#{File.dirname(__FILE__)}/webpage/rdoc"
   rd.rdoc_files.include("lib/**/*.rb")
   rd.rdoc_files.exclude("lib/rubybreaker/type/type_grammar.rb")
+  rd.options << "README.md" << "TUTORIAL.md"
 end
 
 desc "Generate the webpage"
 task :webpage do |t|
   if defined?(RDiscount)
     dir = File.dirname(__FILE__)
-    readme_md = "#{dir}/README.md"
-    output = "#{dir}/webpage/index.html"
-    body = RDiscount.new(File.read(readme_md)).to_html
-    header = File.read("#{dir}/webpage/header.html")
-    footer = File.read("#{dir}/webpage/footer.html")
-    html = header + body + footer
-    File.open(output, "w") { |f| f.write(html) }
+    gen_page("#{dir}/README.md","#{dir}/webpage/index.html")
+    gen_page("#{dir}/TUTORIAL.md","#{dir}/webpage/tutorial.html")
+    gen_page("#{dir}/TOPICS.md","#{dir}/webpage/topics.html")
+    gen_page("#{dir}/ABOUT.md","#{dir}/webpage/about.html")
   end
 end
 

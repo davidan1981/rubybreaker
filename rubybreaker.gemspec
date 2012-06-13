@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
   spec.files.reject! {|fn| fn.include?("idraw")}
   spec.has_rdoc = true
-  spec.rdoc_options = ["-x", "lib/rubybreaker/rubylib/core.rb"]
+  spec.rdoc_options = ["README.md", "TUTORIAL.md", "TOPICS.md", "ABOUT.md"]
   spec.license = "BSD"
   spec.name = "rubybreaker"
   spec.summary = "Dynamic Type Documentation Tool for Ruby"

@@ -6,14 +6,14 @@
 if defined?(Test) && defined?(Test::Unit)
 
   # This class is patched to run RubyBreaker along with the test cases.
-  class Test::Unit::TestCase
+  class Test::Unit::TestCase #:nodoc:
 
     # Save the original constructor method.
-    alias :__rubybreaker_initialize :initialize
+    alias :__rubybreaker_initialize :initialize #:nodoc:
 
     # This method overrides the original constructor to run RubyBreaker before
     # calling the original constructor.
-    def initialize(*args, &blk)
+    def initialize(*args, &blk) #:nodoc:
       RubyBreaker.run()
       return send(:__rubybreaker_initialize, *args, &blk)
     end

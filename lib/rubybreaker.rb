@@ -179,7 +179,7 @@ module RubyBreaker
 end
 
 # This method is available by default.
-module Kernel
+module Kernel #:nodoc:
 
   def typesig(str)
     _TypeDefs = RubyBreaker::TypeDefs
