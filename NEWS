@@ -1,3 +1,8 @@
+# VERSION 0.0.6
+* Running RubyBreaker in shell mode does not require manual code change.
+* Official RubyBreaker logo!
+* Deprecating breakable(). Use break() instead.
+
 # VERSION 0.0.5
 * Rake::RubyBreakerTestTask is supported.
 * Manual modification is no longer required if run as a Rake task.

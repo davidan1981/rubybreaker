@@ -12,10 +12,9 @@ subsequent analyses.
 The primary goal of RubyBreaker is to assign a type signature to every
 method in selected modules and classes. A type signature is written in the
 RubyBreaker Type Annotation Language which resembles the documentation style
-used in Ruby Core Library Doc. Manual code change is _not_ required if
-used in Rakefile and is kept minimal if otherwise.  Overall, this tool
-should help Ruby programmers document their code more rigorously and
-effectively.
+used in Ruby Core Library Doc. No manual code change is required.  Overall,
+this tool should help Ruby programmers document their code more rigorously
+and effectively.
 
 Currently, RubyBreaker *cannot*
 
@@ -26,8 +25,9 @@ Currently, RubyBreaker *cannot*
 
 To contribute to the project, visit RubyBreaker's
 [GitHub page](http://github.com/rockalizer/rubybreaker) and 
-[RubyGems page](http://rubygems.org/gems/rubybreaker). RubyBreaker RDoc can
-be found in [here](rdoc/index.html).
+[RubyGems page](http://rubygems.org/gems/rubybreaker). The web version of
+this document can be found 
+[here](http://rockalizer.webfactional.com/projects/rubybreaker).
 
 ## Requirements
 

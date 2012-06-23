@@ -36,7 +36,7 @@ module RubyBreaker
 
     # Get the specified program.
     prog_name = ARGV[0]
-    prog = File.expand_path(prog)
+    prog = File.expand_path(prog_name)
 
     # It is ok to omit .rb extension. So try to see if prog.rb exists
     if !File.exist?(prog) && !File.extname(prog) == ".rb" 
@@ -52,14 +52,21 @@ module RubyBreaker
     # Remember the program path for later use
     OPTIONS[:prog] = prog
 
+    # Import the libraries specified.
+    OPTIONS[:libs].each do |lib|
+      # Run the program file!
+      self.verbose("Importing #{lib}")
+      eval "require '#{lib}'", TOPLEVEL_BINDING
+      self.verbose("Done importing #{lib}")
+    end
+
+    # Now, RubyBreaker shell mode will run this
+    RubyBreaker.run()
+
     # Run the program file!
     self.verbose("Running #{prog_name}")
     eval "require '#{prog}'", TOPLEVEL_BINDING
     self.verbose("Done running #{prog_name}")
-
-    # Keep in mind that the source program must specify the entry
-    # point--using RubyBreaker.run()--in order to observe the type
-    # information.
   end
 
 end

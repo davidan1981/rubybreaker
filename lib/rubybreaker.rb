@@ -175,8 +175,9 @@ module RubyBreaker
       task_name = task[:name]
       RubyBreaker.verbose("Done reading task information")
       io_file = self.io_file(task_name)
-    elsif OPTIONS[:prog_file] # running in shell mode 
-      Runtime.break(*mods)
+    elsif OPTIONS[:prog] # running in shell mode 
+      Runtime.break(*mods) # should not happen but for backward-compatibility
+      Runtime.break(*OPTIONS[:break])
       io_file = self.io_file(OPTIONS[:prog_file])
     else
       # Otherwise, assume there are no explicit IO files.
