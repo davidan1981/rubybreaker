@@ -24,37 +24,26 @@ module RubyBreaker
     # This hash maps a (breakable) module to a type monitor
     MONITOR_MAP = {}  # module => monitor
 
-    # This set lists modules/classes that are actually instrumented with a
-    # monitor.
-    INSTALLED = Set.new
+    private
 
-    # This method installs a monitor for each breakable module. 
-    # *DEPRECATED*: Use +breakable()+ method instead.
-    def self.instrument() 
-      BREAKABLES.each do |mod|
-        # Duplicate checks in place in these calls.
-        MonitorInstaller.install_module_monitor(mod)
-        INSTALLED << mod
-      end
-    end
-
-    # This method modifies specified modules/classes at the very moment
-    # (instead of registering them for later).
-    def self.breakable(*mods)
+    # Instruments the monitor to the specified modules/classes. 
+    #
+    # TODO: monitor_type is currently not in use. Plan on using it in future
+    #       to do type checker instrumentation
+    def self.install(monitor_type=:break, *mods)
       mods.each do |mod|
         case mod
         when Array
-          self.breakable(*mod)
+          self.install(monitor_type, *mod)
         when Module, Class
-          MonitorInstaller.install_module_monitor(mod)
+          MonitorInstaller.install_monitor(mod)
           eigen_class = self.eigen_class(mod)
-          MonitorInstaller.install_module_monitor(eigen_class)
-          INSTALLED << mod << eigen_class
+          MonitorInstaller.install_monitor(eigen_class)
         when String, Symbol
           begin
             # Get the actual module and install it right now
             mod = eval("#{mod}", TOPLEVEL_BINDING)
-            self.breakable(mod) if mod
+            self.install(monitor_type, mod) if mod
           rescue NameError => e
             RubyBreaker.error("#{mod} cannot be found.")
           end
@@ -63,6 +52,31 @@ module RubyBreaker
         end
       end
     end
+
+    public
+
+    # This method instruments the specified modules/classes at the time of
+    # the call.
+    def self.break(*mods)
+      self.install(:break, *mods)
+    end
+
+    # This method installs a monitor for each breakable module. 
+    # *DEPRECATED*: Use +breakable()+ method instead.
+    def self.instrument() 
+      BREAKABLES.each do |mod|
+        # Duplicate checks in place in these calls.
+        MonitorInstaller.install_monitor(mod)
+      end
+    end
+
+    # This method modifies specified modules/classes at the very moment
+    # (instead of registering them for later).
+    # *DEPRECATED*: Use +break()+ method instead
+    def self.breakable(*mods)
+      self.install(:break, *mods)
+    end
+
   end
 
   # *DEPRECATED*: Use +RubyBreaker.run()+ to indicate the point of entry.
@@ -70,8 +84,14 @@ module RubyBreaker
   end
 
   # This method just redirects to Runtime's method.
+  # *DEPRECATED*: Use +RubyBreaker.break()+ to indicate the point of entry.
   def self.breakable(*mods)
     Runtime.breakable(*mods)
+  end
+
+  # This method just redirects to Runtime's method.
+  def self.break(*mods)
+    Runtime.break(*mods)
   end
 
   # *DEPRECATED*: Use +Runtime.breakable()+ or +RubyBreaker.run()+ method

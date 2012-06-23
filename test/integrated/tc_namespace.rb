@@ -22,7 +22,7 @@ class IntegratedNamespaceTest < Test::Unit::TestCase
   end
 
   def setup()
-    RubyBreaker.breakable(B)
+    RubyBreaker.break(B)
   end
 
   def test_namspace_b_foo

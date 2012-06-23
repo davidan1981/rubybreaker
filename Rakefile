@@ -39,21 +39,27 @@ CLEAN.concat(FileList["webpage/rdoc",
 # If no task specified, do test
 task :default => [:test, :testtask_test]
 
+# The complete list of tasks
+all_tasks = [:parser, 
+             :test, 
+             :testtask_test,
+             :rspec, 
+             :rdoc, 
+             :webpage, 
+             :gem]
+
+# Remove rspec if RSpec is not defined (rspec is not installed)
+all_tasks.delete(:rspec) if !defined?(RSpec)
+
 desc "Do all"
-task :all => [:parser, 
-              :test, 
-              :testtask_test,
-              :rspec, 
-              :rdoc, 
-              :webpage, 
-              :gem] do |t|
-end
+task :all => all_tasks 
 
 desc "Generate gemspec"
 task :gem do |t|
   sh "gem build rubybreaker.gemspec"
 end
 
+desc "Generate RDoc"
 Rake::RDocTask.new do |rd|
   rd.rdoc_dir = "#{File.dirname(__FILE__)}/webpage/rdoc"
   rd.rdoc_files.include("lib/**/*.rb")
@@ -92,7 +98,7 @@ desc "Run rubybreaker testtask test"
 Rake::RubyBreakerTestTask.new(:"testtask_test") do |t|
   t.libs << "lib" << "test/tc_testtask/sample.rb"
   t.test_files = ["test/testtask/tc_testtask.rb"]
-  t.breakable = ["SampleClassA"]
+  t.break = ["SampleClassA"]
 end
 
 if defined?(RSpec)

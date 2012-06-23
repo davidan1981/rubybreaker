@@ -12,7 +12,7 @@ end
 describe "RSpec Test" do
 
   before do 
-    RubyBreaker.breakable(RSpecTestA)
+    RubyBreaker.break(RSpecTestA)
   end
 
   describe RSpecTestA do

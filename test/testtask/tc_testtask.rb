@@ -8,14 +8,14 @@ end
 
 class RubyBreakerTestTaskTest < Test::Unit::TestCase
 
-  def test_breakable()
+  def test_break()
     SampleClassA.new.foo(2)
     t = RubyBreaker::Runtime::Inspector.inspect_meth(SampleClassA, :foo)
     str = t.unparse()
     assert_equal("foo(fixnum[to_s]) -> string", str)
   end
 
-  def test_broken()
+  def test_documented()
     t = RubyBreaker::Runtime::Inspector.inspect_meth(SampleClassB, :foo)
     str = t.unparse()
     assert_equal("foo(fixnum[to_s]) -> string", str)

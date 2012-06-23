@@ -16,16 +16,22 @@ module Rake
   # Rake::RubyBreakerTestTask.new(:"testtask_test") do |t|
   #   t.libs << "lib"
   #   t.test_files = ["test/testtask/tc_testtask.rb"]
-  #   t.breakable = ["SampleClassA"]
+  #   t.break = ["SampleClassA"]
   # end
   #
   class RubyBreakerTestTask < Rake::TestTask
 
-    # List of Breakable modules/classes
-    attr_accessor :breakable
+    # List of modules/classes to break
+    attr_accessor :break
 
     # RubyBreaker options
     attr_accessor :rubybreaker_opts
+
+    # DEPRECATED accessor override
+    def breakable(); @break end
+
+    # DEPRECATED accessor override
+    def breakable=(*args); self.break(*args) end
 
     # This overrides the testtask's constructor. In addition to the original
     # behavior, it keeps track of RubyBreaker options and store them in a
@@ -34,7 +40,7 @@ module Rake
 
       # Initialize extra instance variables
       @rubybreaker_opts = []
-      @breakable = nil
+      @break = nil
 
       # Call the original constructor first
       super(taskname, *args, &blk)
@@ -51,14 +57,14 @@ module Rake
 
       # Construct the task configuration hash
       config = {
-        name: taskname,
-        rubybreaker_opts: opts,
-        breakable: [], # Set doesn't work well with YAML; just use an array
-        test_files: @test_files,
+        :name => taskname,
+        :rubybreaker_opts => opts,
+        :break => [], # Set doesn't work well with YAML; just use an array
+        :test_files => @test_files,
       }
 
       # This allows a bulk declaration of Breakable modules/classes
-      @breakable.each { |b| config[:breakable] << b } if @breakable
+      @break.each { |b| config[:break] << b } if @break
 
       # This code segment is a clever way to store yaml data in a ruby file
       # that reads its own yaml data after __END__ when loaded.

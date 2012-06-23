@@ -14,7 +14,7 @@ class IntegratedInheritBrokenTest < Test::Unit::TestCase
   end
 
   def setup()
-    RubyBreaker.breakable(B)
+    RubyBreaker.break(B)
   end
 
   def test_both

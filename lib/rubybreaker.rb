@@ -1,7 +1,9 @@
 #--
-# This library dynamically profiles and resolves the type information
-# observed at runtime and generates type annotation at the end.  It can be
-# run as either a stand-alone script or as a Ruby library. 
+# This library dynamically instruments the source program, runs the program
+# on Ruby, and produces type documentation based on the observation made
+# during runtime. Although it is possible to use this as a typical Ruby
+# library, our recommendation is to use it in Rakefile or use it as a
+# command-line program. See TUTORIAL for more detail.
 
 require "set"
 require "optparse"
@@ -10,21 +12,23 @@ require_relative "rubybreaker/runtime"
 require_relative "rubybreaker/test"
 
 # RubyBreaker is a dynamic instrumentation and monitoring tool that
-# generates type documentation for Ruby programs. 
+# generates type documentation automatically for Ruby programs. 
 module RubyBreaker
   include TypeDefs
   include Runtime
 
   # Options for RubyBreaker
   OPTIONS = {
-    :debug     => false,       # in debug mode?
-    :style     => :underscore, # type signature style-underscore or camelize
-    :io_file   => nil,         # generate input/output other than default?
-    :append    => false,       # append to the input file (if there is)?
-    :stdout    => false,       # also display on the screen?
-    :verbose   => false,       # in RubyBreaker.verbose mode?
+    :debug        => false,       # in debug mode?
+    :style        => :underscore, # type signature style-underscore or camelize
+    :io_file      => nil,         # generate input/output other than default?
+    :append       => false,       # append to the input file (if there is)?
+    :stdout       => false,       # also display on the screen?
+    :verbose      => false,       # in RubyBreaker.verbose mode?
     :save_output  => true,     # save output to a file?
-    :prog_file    => nil,      # INTERNAL USE ONLY
+    :break        => [],       # modules to break
+    :libs         => [],       # list of library files to import
+    :prog         => nil,      # program or test file
   }
 
   # This option parser may be used for the command-line mode or for the
@@ -33,6 +37,16 @@ module RubyBreaker
   OPTION_PARSER = OptionParser.new do |opts|
 
     opts.banner = "Usage: #{File.basename(__FILE__)} [options] prog[.rb]" 
+
+    opts.on("-b MODULES", "--break MODULES", "Specify modules/classes to 'break'") do |s|
+      tokens = s.split(/[;,]/)
+      tokens.each {|t| OPTIONS[:break] << t}
+    end
+    
+    opts.on("-l LIBRARIES", "--libs LIBRARIES", "Specify libraries to load") do |s|
+      tokens = s.split(":")
+      tokens.each {|t| OPTIONS[:libs] << t}
+    end
 
     opts.on("--debug", "Run in debug mode") do 
       OPTIONS[:debug] = true
@@ -104,7 +118,7 @@ module RubyBreaker
     code = ""
 
     # Document each module that was monitored.
-    INSTALLED.each { |mod| 
+    MONITOR_MAP.each_key { |mod| 
       str = Runtime::TypeSigUnparser.unparse(mod) 
       code << str
       print str if OPTIONS[:stdout] # display on the screen if requested
@@ -157,12 +171,12 @@ module RubyBreaker
       RubyBreaker.verbose("Running RubyBreaker within a testcase")
       task = self.task
       OPTION_PARSER.parse(*task[:rubybreaker_opts])
-      Runtime.breakable(*task[:breakable])
+      Runtime.break(*task[:break])
       task_name = task[:name]
       RubyBreaker.verbose("Done reading task information")
       io_file = self.io_file(task_name)
     elsif OPTIONS[:prog_file] # running in shell mode 
-      Runtime.breakable(*mods)
+      Runtime.break(*mods)
       io_file = self.io_file(OPTIONS[:prog_file])
     else
       # Otherwise, assume there are no explicit IO files.

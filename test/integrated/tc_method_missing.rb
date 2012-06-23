@@ -12,7 +12,7 @@ class IntegratedMethodMissingTest < Test::Unit::TestCase
   end
   
   def setup()
-    RubyBreaker.breakable(A)
+    RubyBreaker.break(A)
   end
 
   # TODO: This must be fixed once variable length argument type is supported

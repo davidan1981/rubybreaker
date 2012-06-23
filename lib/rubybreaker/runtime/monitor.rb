@@ -206,7 +206,7 @@ module RubyBreaker
       end
 
       # Installs an module (class) monitor to the object. 
-      def self.install_module_monitor(mod)
+      def self.install_monitor(mod)
 
         RubyBreaker.log("Installing module monitor for #{mod}")
 

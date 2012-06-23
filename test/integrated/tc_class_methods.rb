@@ -16,7 +16,7 @@ class IntegratedClassMethodsTest < Test::Unit::TestCase
   end
 
   def setup()
-    RubyBreaker.breakable(A, B)
+    RubyBreaker.break(A, B)
   end
 
   def test_class_methods

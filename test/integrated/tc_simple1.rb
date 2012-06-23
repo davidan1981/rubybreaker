@@ -37,7 +37,7 @@ class IntegratedSimpleTest < Test::Unit::TestCase
   end
 
   def setup()
-    RubyBreaker.breakable(A)
+    RubyBreaker.break(A)
   end
 
   def test_simple1_a_foo
