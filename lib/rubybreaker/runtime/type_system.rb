@@ -117,7 +117,7 @@ module RubyBreaker
         exist_meth_type = meth_type_map[meth_name.to_sym] 
         
         # Again, find the arity
-        meth_obj = obj.method(MonitorUtils.get_alt_meth_name(meth_name))
+        meth_obj = obj.method(Monitor.get_alt_meth_name(meth_name))
         arity = meth_obj.arity
 
         # Construct the newly observed method type first
@@ -210,7 +210,7 @@ module RubyBreaker
           #
           # First, use the orignal method's arity to find out # of
           # arguments. 
-          meth_obj = obj.method(MonitorUtils.get_alt_meth_name(meth_name))
+          meth_obj = obj.method(Monitor.get_alt_meth_name(meth_name))
           arity = meth_obj.arity
           arg_types = [nil] * meth_obj.arity.abs 
           if blk

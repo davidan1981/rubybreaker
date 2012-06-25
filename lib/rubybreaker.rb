@@ -25,10 +25,10 @@ module RubyBreaker
     :append       => false,       # append to the input file (if there is)?
     :stdout       => false,       # also display on the screen?
     :verbose      => false,       # in RubyBreaker.verbose mode?
-    :save_output  => true,     # save output to a file?
-    :break        => [],       # modules to break
-    :libs         => [],       # list of library files to import
-    :prog         => nil,      # program or test file
+    :save_output  => true,        # save output to a file?
+    :break        => [],          # modules to break
+    :libs         => [],          # list of library files to import
+    :prog         => nil,         # program or test file
   }
 
   # This option parser may be used for the command-line mode or for the

@@ -13,6 +13,7 @@ module RubyBreaker
 
   module Runtime
 
+    # The default type system for RubyBreaker
     DEFAULT_TYPE_SYSTEM = TypeSystem.new
 
     # This class monitors method calls before and after. It simply reroutes
@@ -20,69 +21,7 @@ module RubyBreaker
     # the actual work of gathering type information. 
     class Monitor 
 
-      # attr_accessor :mod
       attr_accessor :pluggable
-
-      public
-
-      def initialize(mod, pluggable)
-        # @mod = mod
-        @pluggable = pluggable
-      end
-
-      # Starts monitoring of a method; it wraps each argument so that they
-      # can gather type information in the callee.
-      def monitor_before_method(obj, meth_info)
-        @pluggable.before_method(obj, meth_info)
-      end
-
-      # This method is invoked after the actual method is invoked. 
-      def monitor_after_method(obj, meth_info)
-        @pluggable.after_method(obj, meth_info)
-      end
-
-    end
-
-    # This class is a switch to turn on and off the type monitoring system.
-    # It is important to turn off the monitor once the process is inside the
-    # monitor; otherwise, it WILL fall into an infinite loop.
-    class MonitorSwitch
-
-      attr_accessor :switch
-
-      def initialize(); @switch = true end
-
-      def turn_on();
-        RubyBreaker.log("Switch turned on")
-        @switch = true; 
-      end
-
-      def turn_off(); 
-        RubyBreaker.log("Switch turned off")
-        @switch = false; 
-      end
-
-      def set_to(mode); @switch = mode; end
-    end
-
-    # TODO:For now, we use a global switch; but in future, a switch per
-    # object should be used for multi-process apps. However, there is still
-    # a concern for module tracking in which case, there isn't really a way
-    # to do this unless we track with the process or some unique id for that
-    # process.
-    GLOBAL_MONITOR_SWITCH = MonitorSwitch.new 
-
-    # This context is used for keeping track of context in the user code.
-    # This will ignore the context within the RubyBreaker code, so it is
-    # easy to pinpoint program locations without distraction from the
-    # RubyBreaker code.
-    CONTEXT = Context.new(ObjectPosition.new(self,"main"))
-
-    # This module contains helper methods for monitoring objects and
-    # modules.
-    module MonitorUtils
-
-      public
 
       # This will do the actual routing work for a particular "monitored"
       # method call.
@@ -177,12 +116,60 @@ module RubyBreaker
         return meth_name[2..-1]
       end
 
+      def initialize(mod, pluggable)
+        @pluggable = pluggable
+      end
+
+      # Starts monitoring of a method; it wraps each argument so that they
+      # can gather type information in the callee.
+      def monitor_before_method(obj, meth_info)
+        @pluggable.before_method(obj, meth_info)
+      end
+
+      # This method is invoked after the actual method is invoked. 
+      def monitor_after_method(obj, meth_info)
+        @pluggable.after_method(obj, meth_info)
+      end
+
     end
+
+    # This class is a switch to turn on and off the type monitoring system.
+    # It is important to turn off the monitor once the process is inside the
+    # monitor; otherwise, it WILL fall into an infinite loop.
+    class MonitorSwitch
+
+      attr_accessor :switch
+
+      def initialize(); @switch = true end
+
+      def turn_on();
+        RubyBreaker.log("Switch turned on")
+        @switch = true; 
+      end
+
+      def turn_off(); 
+        RubyBreaker.log("Switch turned off")
+        @switch = false; 
+      end
+
+      def set_to(mode); @switch = mode; end
+    end
+
+    # TODO:For now, we use a global switch; but in future, a switch per
+    # object should be used for multi-process apps. However, there is still
+    # a concern for module tracking in which case, there isn't really a way
+    # to do this unless we track with the process or some unique id for that
+    # process.
+    GLOBAL_MONITOR_SWITCH = MonitorSwitch.new 
+
+    # This context is used for keeping track of context in the user code.
+    # This will ignore the context within the RubyBreaker code, so it is
+    # easy to pinpoint program locations without distraction from the
+    # RubyBreaker code.
+    CONTEXT = Context.new(ObjectPosition.new(self,"main"))
 
     # This module installs a monitor in the object.
     module MonitorInstaller
-
-      include MonitorUtils
 
       # returns true if the receiver is a module or a class
       def self.is_module?(recv)
@@ -191,16 +178,16 @@ module RubyBreaker
 
       # renames the method in essence; this method also "installs" the
       # module monitor for the class
-      def self.rename_meth(recv, meth_name)
-        alt_meth_name = MonitorUtils.get_alt_meth_name(meth_name)
+      def self.monkey_patch_meth(recv, meth_name)
+        alt_meth_name = Monitor.get_alt_meth_name(meth_name)
         recv.module_eval("alias :\"#{alt_meth_name}\" :\"#{meth_name}\"")
         RubyBreaker.log("Adding alternate method for #{meth_name}")
         recv.module_eval <<-EOF
           def #{meth_name}(*args, &blk)
-            RubyBreaker::Runtime::MonitorUtils.route(self, 
-                                                     "#{meth_name}",
-                                                     *args,
-                                                     &blk)
+            RubyBreaker::Runtime::Monitor.route(self, 
+                                                "#{meth_name}",
+                                                *args,
+                                                &blk)
           end
         EOF
       end
@@ -231,7 +218,7 @@ module RubyBreaker
         broken_meths = broken_mt_map.keys
 
         meths.each do |m| 
-          self.rename_meth(mod,m) unless broken_meths.include?(m)
+          self.monkey_patch_meth(mod,m) unless broken_meths.include?(m)
         end
 
       end

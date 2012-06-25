@@ -10,6 +10,7 @@ require_relative "runtime/inspector"
 
 module RubyBreaker
 
+  # This module contains things that are needed at runtime.
   module Runtime
 
     # This set keeps track of modules/classes that will be monitored.
@@ -56,9 +57,15 @@ module RubyBreaker
     public
 
     # This method instruments the specified modules/classes at the time of
-    # the call.
+    # the call so they are monitored for type documentation.
     def self.break(*mods)
       self.install(:break, *mods)
+    end
+
+    # This method instruments the specified modules/classes at the time of
+    # the call so that they are type checked during runtime.
+    def self.check(*mods)
+      self.install(:check, *mods)
     end
 
     # This method installs a monitor for each breakable module. 
@@ -92,6 +99,10 @@ module RubyBreaker
   # This method just redirects to Runtime's method.
   def self.break(*mods)
     Runtime.break(*mods)
+  end
+
+  def self.check(*mods)
+    Runtime.check(*mods)
   end
 
   # *DEPRECATED*: Use +Runtime.breakable()+ or +RubyBreaker.run()+ method
