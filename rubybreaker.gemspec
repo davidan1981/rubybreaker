@@ -7,8 +7,9 @@ Gem::Specification.new do |spec|
   spec.bindir = "bin"
   spec.executable = "rubybreaker"
   spec.add_dependency("treetop")
-  spec.description = "RubyBreaker is a dynamic type documentation tool for Ruby. " +
+  spec.description = "RubyBreaker is a dynamic type documentation/checking tool for Ruby. " +
                      "It dynamically instruments code, monitors objects during execution, " +
+                     "performs dynamic type checking, " +
                      "and generates type documentation based on the profiled information. " +
                      "In other words, RubyBreaker \"breaks\" Ruby code out of its " +
                      "obscurity and wildness (as in \"code breaking\" or \"horse breaking\") " +
@@ -17,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
   spec.files.reject! {|fn| fn.include?("idraw")}
   spec.has_rdoc = true
-  spec.rdoc_options = ["README.md", "TUTORIAL.md", "TOPICS.md", "ABOUT.md"]
+  spec.rdoc_options = ["README.md"]
   spec.license = "BSD"
   spec.name = "rubybreaker"
   spec.summary = "Dynamic Type Documentation Tool for Ruby"

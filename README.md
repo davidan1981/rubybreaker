@@ -25,7 +25,7 @@ Currently, RubyBreaker *cannot*
 To contribute to the project, visit RubyBreaker's
 [GitHub page](http://github.com/rockalizer/rubybreaker) and 
 [RubyGems page](http://rubygems.org/gems/rubybreaker). The web version of
-this document can be found 
+this document and the tutorial can be found 
 [here](http://rockalizer.webfactional.com/projects/rubybreaker).
 
 ## Requirements

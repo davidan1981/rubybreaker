@@ -19,7 +19,7 @@ to use RubyBreaker in a Rakefile later.
 
 The above command runs RubyBreaker in verbose mode (`-v`) and will display
 the output on the screen (`-s`). Before RubyBreaker runs `prog.rb`, it will
-import (`-l`) `lib.rb` and instrument (`-b`) classes `A` and `B`.
+import (`-l`) `lib.rb` and _break_ (`-b`) classes `A` and `B`.
 Here is `lib.rb`:
 
     class A
@@ -70,7 +70,7 @@ obtain precise and accurate type information.
 ### Using Ruby Unit Testing Framework
 
 Instead of manually inserting the entry point indicator in the source
-program, you can take advantage of Ruby's built-in testing framework. This
+program, you can take advantage of Ruby&rsquo;s built-in testing framework. This
 is preferred to modifying the source program directly, especially for the
 long term program maintainability. But no worries! This method is as simple
 as the previous one.
@@ -85,7 +85,7 @@ as the previous one.
       # ...tests!...
     end
 
-That's it! The only requirements are to indicate to RubyBreaker which modules
+That&rsquo;s it! The only requirements are to indicate to RubyBreaker which modules
 and classes to "break" and to place `require rubybreaker` _after_
 `require test/unit`.
 
@@ -124,7 +124,7 @@ RubyBreaker.  The following code snippet describes how it can be done:
 Note that `RubyBrakerTestTask` can simply replace your `TestTask` block in
 Rakefile. In fact, the former is a subclass of the latter and includes all
 features supported by the latter. The only additional options are
-`rubybreaker_opts` which is RubyBreaker's command-line options and
+`rubybreaker_opts` which is RubyBreaker command-line options and
 `break` which specifies which modules and classes to monitor.  Since
 `Class1` and `Class2` are not _recognized_ by this Rakefile, you must use
 string literals to specify modules and classes (and with full namespace). 
@@ -184,7 +184,7 @@ precise return type.
 
 ### Duck Type
 
-This type is inspired by the Ruby Language's duck typing, _"if it
+This type is inspired by the Ruby Language&rsquo;s duck typing, _"if it
 walks like a duck and quacks like a duck, it must be a duck."_ Using this
 type, an object can be represented simply by a list of method names. For
 example `[walks, quacks]` is an object that has `walks` and `quacks`
@@ -231,7 +231,7 @@ suffices, `?` and `*`, respectively.
 
 ### Block Type
 
-One of the Ruby's prominent features is the block argument. It allows
+One of the Ruby&rsquo;s prominent features is the block argument. It allows
 the caller to pass in a piece of code to be executed inside the callee. This
 code block can be executed by the Ruby construct, `yield`, or by directly
 calling the `call` method of the block object. In RubyBreaker, this type can
@@ -263,7 +263,7 @@ code:
     end
 
 There is no way to document the type of `foo` without using a method list
-type. Let's try to give a method type to `foo` without a method list. The
+type. Let&rsquo;s try to give a method type to `foo` without a method list. The
 closest we can come up with would be `foo(fixnum or string) -> fixnum and
 string`. But RubyBreaker does not have the "and" type in the type annotation
 language because it gives me an headache! (By the way, it needs to be an
@@ -289,3 +289,29 @@ compatibility between the return types and "promote" the method type to a
 method list type by spliting the type signature into two (or more in
 subsequent "promotions").
 
+### Early Dynamic Type Checking
+
+RubyBreaker gives you an option to run the early dynamic type check. If a
+method is documented and its module is specified to be _type checked_, then
+RubyBreaker will verify if the argument types and the return type are
+appropriate at runtime. To allow this feature in command-line, use `-c`
+(checking) option:
+
+    rubybreaker -l lib.rb -c A prog.rb
+
+Or use it in Rakefile:
+
+    require "rubybreaker/task"
+    ...
+    desc "Run RubyBreaker"
+    Rake::RubyBreakerTestTask.new(:"rubybreaker") do |t|
+      t.libs << "lib" 
+      t.test_files = ["test/foo/tc_foo1.rb"]
+      # ...Other test task options..
+      t.rubybreaker_opts << "-v"           # run in verbose mode
+      t.break = ["Class1", "Class2", ...]  # specify classes to monitor
+      t.check = ["Class3", ....] # specify classes to check
+    end
+
+Alternatively, you can use `RubyBreaker.check()` to specify classes to type
+check in the setup code of the test case.
