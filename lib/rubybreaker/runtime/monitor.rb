@@ -13,6 +13,14 @@ module RubyBreaker
 
   module Runtime
 
+    # This hash maps a module to a nested hash that maps a method name to a
+    # method type. This hash is shared between breakable modules/classes and
+    # non-breakable modules/classes.
+    TYPE_MAP = {} # module => {:meth_name => type}
+
+    # This hash maps a (breakable) module to a type monitor
+    MONITOR_MAP = {}  # module => monitor
+
     # The default type system for RubyBreaker
     DEFAULT_TYPE_SYSTEM = TypeSystem.new
 
@@ -26,6 +34,7 @@ module RubyBreaker
       # This will do the actual routing work for a particular "monitored"
       # method call.
       #
+      # route_type:: :break or :check
       # obj:: is the object receiving the message; is never wrapped object
       # meth_name:: is the original method name being called args:: is a
       # list of arguments for the original method call blk:: is the block
@@ -35,7 +44,7 @@ module RubyBreaker
       # NOTE: This method should not assume that obj is a monitored
       # object.  That is, no special method should be called to obj unless it
       # checks first.
-      def self.route(obj,meth_name,*args,&blk)
+      def self.route(route_type, obj, meth_name, *args, &blk)
 
         # remember the switch mode before turning it off
         switch = GLOBAL_MONITOR_SWITCH.switch
@@ -77,9 +86,21 @@ module RubyBreaker
 
         meth_info = MethodInfo.new(meth_name, args, blk, nil)
 
-        mm.monitor_before_method(obj, meth_info)
+        begin
+          case route_type
+          when :break
+            mm.break_before_method(obj, meth_info)
+          when :check
+            mm.check_before_method(obj, meth_info)
+          end
+        rescue Errors::TypeError => e
+          # Trap it, turn on the global monitor and then re-raise the
+          # exception
+          GLOBAL_MONITOR_SWITCH.turn_on()
+          raise e
+        end
 
-        RubyBreaker.log("monitor_before_method ended")
+        RubyBreaker.log("break_before_method ended")
 
         # we are going to turn the switch back on
         GLOBAL_MONITOR_SWITCH.turn_on()
@@ -92,7 +113,21 @@ module RubyBreaker
         GLOBAL_MONITOR_SWITCH.turn_off()
 
         meth_info.ret = retval
-        mm.monitor_after_method(obj, meth_info)
+
+        begin
+          case route_type
+          when :break
+            mm.break_after_method(obj, meth_info)
+          when :check
+            mm.check_after_method(obj, meth_info)
+          end
+        rescue Errors::TypeError => e
+          # Trap it, turn on the global monitor and then re-raise the
+          # exception
+          GLOBAL_MONITOR_SWITCH.turn_on()
+          raise e
+        end
+
         retval = meth_info.ret  # Return value may have been altered by the
                                 # after_method monitoring code
 
@@ -116,19 +151,28 @@ module RubyBreaker
         return meth_name[2..-1]
       end
 
-      def initialize(mod, pluggable)
+      def initialize(pluggable)
         @pluggable = pluggable
       end
 
-      # Starts monitoring of a method; it wraps each argument so that they
-      # can gather type information in the callee.
-      def monitor_before_method(obj, meth_info)
-        @pluggable.before_method(obj, meth_info)
+      # This method is invoked before the original method is executed.
+      def check_before_method(obj, meth_info)
+        @pluggable.check_before_method(obj, meth_info)
       end
 
-      # This method is invoked after the actual method is invoked. 
-      def monitor_after_method(obj, meth_info)
-        @pluggable.after_method(obj, meth_info)
+      # This method is invoked after the original method is executed.
+      def check_after_method(obj, meth_info)
+        @pluggable.check_after_method(obj, meth_info)
+      end
+
+      # This method is invoked before the original method is executed.
+      def break_before_method(obj, meth_info)
+        @pluggable.break_before_method(obj, meth_info)
+      end
+
+      # This method is invoked after the original method is executed.
+      def break_after_method(obj, meth_info)
+        @pluggable.break_after_method(obj, meth_info)
       end
 
     end
@@ -172,28 +216,26 @@ module RubyBreaker
     module MonitorInstaller
 
       # returns true if the receiver is a module or a class
-      def self.is_module?(recv)
-        return recv.respond_to?(:class) && recv.kind_of?(Module)
+      def self.is_module?(mod)
+        return mod.respond_to?(:class) && mod.kind_of?(Module)
       end
 
       # renames the method in essence; this method also "installs" the
       # module monitor for the class
-      def self.monkey_patch_meth(recv, meth_name)
+      def self.monkey_patch_meth(monitor_type, mod, meth_name)
         alt_meth_name = Monitor.get_alt_meth_name(meth_name)
-        recv.module_eval("alias :\"#{alt_meth_name}\" :\"#{meth_name}\"")
+        mod.module_eval("alias :\"#{alt_meth_name}\" :\"#{meth_name}\"")
         RubyBreaker.log("Adding alternate method for #{meth_name}")
-        recv.module_eval <<-EOF
+        route_call = "RubyBreaker::Runtime::Monitor.route"
+        mod.module_eval <<-EOF
           def #{meth_name}(*args, &blk)
-            RubyBreaker::Runtime::Monitor.route(self, 
-                                                "#{meth_name}",
-                                                *args,
-                                                &blk)
+            #{route_call}(:#{monitor_type}, self,"#{meth_name}",*args,&blk)
           end
         EOF
       end
 
       # Installs an module (class) monitor to the object. 
-      def self.install_monitor(mod)
+      def self.install_monitor(monitor_type, mod)
 
         RubyBreaker.log("Installing module monitor for #{mod}")
 
@@ -203,7 +245,7 @@ module RubyBreaker
           return
         end
 
-        MONITOR_MAP[mod] = Monitor.new(mod, DEFAULT_TYPE_SYSTEM)
+        MONITOR_MAP[mod] = Monitor.new(DEFAULT_TYPE_SYSTEM)
 
         # Create the type map if it does not exist already. Remember, this
         # map could have been made by typesig().
@@ -213,12 +255,15 @@ module RubyBreaker
         # methods. Those are part of the owner's not this module.
         meths = mod.instance_methods(false)  
 
-        # See if any method is already broken (explicitly typesig'ed)
-        broken_mt_map = Inspector.inspect_all(mod)
-        broken_meths = broken_mt_map.keys
+        # See if any method is already documented (explicitly typesig'ed)
+        doc_mt_map = Inspector.inspect_all(mod)
+        doc_meths = doc_mt_map.keys
 
         meths.each do |m| 
-          self.monkey_patch_meth(mod,m) unless broken_meths.include?(m)
+          # Documented method will not be monkey-patched for "breaking"
+          unless monitor_type == :break && doc_meths.include?(m)
+            self.monkey_patch_meth(monitor_type, mod, m) 
+          end
         end
 
       end

@@ -17,14 +17,6 @@ module RubyBreaker
     # *DEPRECATED* : Use +breakable+ method instead.
     BREAKABLES = Set.new 
 
-    # This hash maps a module to a nested hash that maps a method name to a
-    # method type. This hash is shared between breakable modules/classes and
-    # non-breakable modules/classes.
-    TYPE_MAP = {} # module => {:meth_name => type}
-
-    # This hash maps a (breakable) module to a type monitor
-    MONITOR_MAP = {}  # module => monitor
-
     private
 
     # Instruments the monitor to the specified modules/classes. 
@@ -37,9 +29,10 @@ module RubyBreaker
         when Array
           self.install(monitor_type, *mod)
         when Module, Class
-          MonitorInstaller.install_monitor(mod)
+          # Install both instance and its eigen class
+          MonitorInstaller.install_monitor(monitor_type, mod)
           eigen_class = self.eigen_class(mod)
-          MonitorInstaller.install_monitor(eigen_class)
+          MonitorInstaller.install_monitor(monitor_type, eigen_class)
         when String, Symbol
           begin
             # Get the actual module and install it right now
@@ -73,7 +66,7 @@ module RubyBreaker
     def self.instrument() 
       BREAKABLES.each do |mod|
         # Duplicate checks in place in these calls.
-        MonitorInstaller.install_monitor(mod)
+        MonitorInstaller.install_monitor(:break, mod)
       end
     end
 

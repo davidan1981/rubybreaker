@@ -41,7 +41,7 @@ module RubyBreaker
     # program.
     class UserError < ::Exception
       
-      def initialize(msg, ctx)
+      def initialize(msg, ctx=nil)
         super(msg)
         @ctx = ctx
       end

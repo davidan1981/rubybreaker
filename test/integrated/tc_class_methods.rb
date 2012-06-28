@@ -10,13 +10,14 @@ class IntegratedClassMethodsTest < Test::Unit::TestCase
 
   class B
     class << self
-      typesig("bar(fixnum[to_s]) -> string")
+      typesig("bar(fixnum[+]) -> string")
       def bar(x); x.to_s end
     end
   end
 
   def setup()
-    RubyBreaker.break(A, B)
+    RubyBreaker.break(A)
+    RubyBreaker.check(B)
   end
 
   def test_class_methods
@@ -26,10 +27,19 @@ class IntegratedClassMethodsTest < Test::Unit::TestCase
     assert_equal("foo(fixnum[to_s]) -> string", str)
   end
 
-  def test_broken_class_methods
+  def test_documented_class_methods
     b_bar_meth_type = Runtime::Inspector.inspect_class_meth(B, :bar)
     str = RubyBreaker::TypeUnparser.unparse(b_bar_meth_type)
-    assert_equal("bar(fixnum[to_s]) -> string", str)
+    assert_equal("bar(fixnum[+]) -> string", str)
+  end
+
+  def test_type_checking
+    assert_nothing_thrown do
+      B.bar(1)
+    end
+    assert_raise Errors::TypeError do
+      B.bar(:abc)
+    end
   end
 
 end

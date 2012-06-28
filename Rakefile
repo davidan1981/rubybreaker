@@ -99,6 +99,7 @@ Rake::RubyBreakerTestTask.new(:"testtask_test") do |t|
   t.libs << "lib" << "test/tc_testtask/sample.rb"
   t.test_files = ["test/testtask/tc_testtask.rb"]
   t.break = ["SampleClassA"]
+  t.check = ["SampleClassB"]
 end
 
 if defined?(RSpec)

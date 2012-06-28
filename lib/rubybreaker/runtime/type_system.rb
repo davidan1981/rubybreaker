@@ -3,7 +3,8 @@
 # subtyping defined in ../typing/subtyping.rb. It is not a constraint-based
 # type system and does not check type errors statically. The main purpose of
 # this type system is to give a readable type signature to every method in
-# designated modules and classes.
+# modules/classes specified for "breaking" and to type check documented
+# methods of modules/classes specified for "checking".
 
 require_relative "util"
 require_relative "object_wrapper"
@@ -165,14 +166,79 @@ module RubyBreaker
         if !resolved
           exist_meth_type.types << new_meth_type
         end
+
+      end
+
+      # This method creates the prefix for the type error message.
+      def type_error_msg_prefix(mod, meth_name)
+        result = /#<Class:(.+)>/.match("#{mod}")
+        prefix = result ? "#{result[1]}." : "#{mod}#"
+        return "#{prefix}#{meth_name}"
       end
 
       public
-      
-      # This method occurs before every "monitored" method call. It wraps
-      # each argument with the object wrapper.
-      def before_method(obj, meth_info)
 
+      # This method is invoked before the original method is executed.
+      def check_before_method(obj, meth_info)
+        is_obj_mod = (obj.class == Class or obj.class == Module)
+        mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
+
+        meth_type_map = TYPE_MAP[mod]
+        return unless meth_type_map
+
+        # Let's take things out of the MethodInfo object
+        meth_name = meth_info.meth_name
+        args = meth_info.args
+        blk = meth_info.blk
+        ret = meth_info.ret
+
+        # Get the registered method type for this method
+        meth_type = meth_type_map[meth_name]
+
+        args.each_with_index do |arg, i|
+          arg_type = NominalType.new(arg.class)
+          if !arg_type.subtype_of?(meth_type.arg_types[i])
+            msg = type_error_msg_prefix(mod, meth_name) +
+                  "'s #{Util.ordinalize(i+1)} argument " +
+                  "does not have type #{arg_type.unparse()}."
+            raise Errors::TypeError.new(msg)
+          end
+        end
+
+      end
+
+      # This method is invoked after the original method is executed.
+      def check_after_method(obj, meth_info)
+        is_obj_mod = (obj.class == Class or obj.class == Module)
+        mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
+
+        meth_type_map = TYPE_MAP[mod]
+        return unless meth_type_map
+
+        # Let's take things out of the MethodInfo object
+        meth_name = meth_info.meth_name
+        args = meth_info.args
+        blk = meth_info.blk
+        ret = meth_info.ret
+
+        # Get the registered method type for this method
+        meth_type = meth_type_map[meth_name]
+
+        ret_type = NominalType.new(ret.class)
+        if !meth_type.ret_type.subtype_of?(ret_type)
+          msg = type_error_msg_prefix(mod, meth_name) +
+                " return value does not have type #{ret_type.unparse()}."
+          raise Errors::TypeError.new(msg)
+        end
+      end
+      
+      # This method occurs before every call to a "monitored" method in a
+      # module/class specified for breaking. It wraps each argument with the
+      # object wrapper so it can be tracked of the method calls. 
+      def break_before_method(obj, meth_info)
+
+        # Use the eigen class if the object is a module/class and use the
+        # object's class otherwise.
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
@@ -201,7 +267,7 @@ module RubyBreaker
           # This means the method type has been created previously.
           unless (blk == nil && meth_type.blk_type == nil) &&
                  (!blk || blk.arity == meth_type.blk_type.arg_types.length)
-            raise Errors::TypeError("Block usage is inconsistent")
+            raise Errors::TypeError.new("Block usage is inconsistent")
           end
         else
           # No method type has been created for this method yet. Create a
@@ -229,9 +295,10 @@ module RubyBreaker
 
       end
 
-      # This method occurs after every "monitored" method call. It updates
-      # the type information.
-      def after_method(obj, meth_info)
+      # This method occurs after every call to a "monitored" method call of
+      # a module/class specified for "breaking". It updates the type
+      # information.
+      def break_after_method(obj, meth_info)
 
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class

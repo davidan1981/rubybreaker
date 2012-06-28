@@ -24,6 +24,9 @@ module Rake
     # List of modules/classes to break
     attr_accessor :break
 
+    # List of modules/classes to check
+    attr_accessor :check
+
     # RubyBreaker options
     attr_accessor :rubybreaker_opts
 
@@ -41,6 +44,7 @@ module Rake
       # Initialize extra instance variables
       @rubybreaker_opts = []
       @break = nil
+      @check = nil
 
       # Call the original constructor first
       super(taskname, *args, &blk)
@@ -60,11 +64,13 @@ module Rake
         :name => taskname,
         :rubybreaker_opts => opts,
         :break => [], # Set doesn't work well with YAML; just use an array
+        :check => [],
         :test_files => @test_files,
       }
 
       # This allows a bulk declaration of Breakable modules/classes
       @break.each { |b| config[:break] << b } if @break
+      @check.each { |c| config[:check] << c } if @check
 
       # This code segment is a clever way to store yaml data in a ruby file
       # that reads its own yaml data after __END__ when loaded.

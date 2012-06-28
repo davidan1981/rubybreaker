@@ -31,13 +31,19 @@ module RubyBreaker
     # default type system that comes with RubyBreaker.
     module Pluggable
 
+      def check_before_method_call(obj, meth_info)
+      end 
+
+      def check_after_method_call(obj, meth_info)
+      end
+
       # This method will be invoked right before the actual method is
       # invoked.
       #
       # obj:: the receiver of the method call (message)
       # method_info:: a MethodInfo object containing the method call
       #               information
-      def before_method_call(obj, meth_info)
+      def break_before_method_call(obj, meth_info)
       end
 
       # This method will be invoked right after the actual method is
@@ -46,7 +52,7 @@ module RubyBreaker
       # obj:: the receiver of the method call (message)
       # method_info:: a MethodInfo object containing the method call
       #               information
-      def after_method_call(obj, meth_info)
+      def break_after_method_call(obj, meth_info)
       end
 
     end

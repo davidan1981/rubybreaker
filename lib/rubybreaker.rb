@@ -26,7 +26,8 @@ module RubyBreaker
     :stdout       => false,       # also display on the screen?
     :verbose      => false,       # in RubyBreaker.verbose mode?
     :save_output  => true,        # save output to a file?
-    :break        => [],          # modules to break
+    :break        => [],          # modules/classes to break
+    :check        => [],          # modules/classes to check
     :libs         => [],          # list of library files to import
     :prog         => nil,         # program or test file
   }
@@ -43,6 +44,11 @@ module RubyBreaker
       tokens.each {|t| OPTIONS[:break] << t}
     end
     
+    opts.on("-c MODULES", "--check MODULES", "Specify modules/classes to check") do |s|
+      tokens = s.split(/[;,]/)
+      tokens.each {|t| OPTIONS[:check] << t}
+    end
+
     opts.on("-l LIBRARIES", "--libs LIBRARIES", "Specify libraries to load") do |s|
       tokens = s.split(":")
       tokens.each {|t| OPTIONS[:libs] << t}
@@ -172,12 +178,14 @@ module RubyBreaker
       task = self.task
       OPTION_PARSER.parse(*task[:rubybreaker_opts])
       Runtime.break(*task[:break])
+      Runtime.check(*task[:check])
       task_name = task[:name]
       RubyBreaker.verbose("Done reading task information")
       io_file = self.io_file(task_name)
     elsif OPTIONS[:prog] # running in shell mode 
       Runtime.break(*mods) # should not happen but for backward-compatibility
       Runtime.break(*OPTIONS[:break])
+      Runtime.check(*OPTIONS[:check])
       io_file = self.io_file(OPTIONS[:prog_file])
     else
       # Otherwise, assume there are no explicit IO files.

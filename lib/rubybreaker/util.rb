@@ -8,6 +8,29 @@ module RubyBreaker
   # in the project.
   module Util
 
+    def self.uneigen(mod_str)
+      result = /^#<Class:(.+)>#/.match(mod_str)
+      if result 
+        return result[0]
+      else
+        return mod_str
+      end
+    end
+
+    # File lib/active_support/inflector.rb, line 295
+    def self.ordinalize(number)
+      if (11..13).include?(number.to_i % 100)
+        "#{number}th"
+      else
+        case number.to_i % 10
+          when 1; "#{number}st"
+          when 2; "#{number}nd"
+          when 3; "#{number}rd"
+          else    "#{number}th"
+        end
+      end
+    end
+
     # File activesupport/lib/active_support/inflector/methods.rb, line 48
     def self.underscore(camel_cased_word)
       word = camel_cased_word.to_s.dup

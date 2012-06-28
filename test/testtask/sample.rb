@@ -6,5 +6,6 @@ end
 
 class SampleClassB
   def foo(x); x.to_s end
+  def bar(x); x.to_s end
 end
 
