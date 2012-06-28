@@ -1,3 +1,6 @@
+# VERSION 0.0.7
+* Early dynamic type check is implemented.
+
 # VERSION 0.0.6
 * Running RubyBreaker in shell mode does not require manual code change.
 * Official RubyBreaker logo!

@@ -19,7 +19,6 @@ and effectively.
 Currently, RubyBreaker *cannot*
 
 * Auto-document block arguments (inherent)
-* Perform early dynamic type checks
 * Support parametric polymorphic types
 * Support RDoc or YARD output format
 
