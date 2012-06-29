@@ -72,6 +72,52 @@ class ObjectWrapperTest < Test::Unit::TestCase
     assert_equal(x.object_id, wrapped_x.object_id)
   end
 
+  def test_fixnum()
+    x = 1
+    y = 2
+    wrapped_x = Runtime::ObjectWrapper.new(x)
+    z = wrapped_x + y
+    assert_equal(3, z)
+    z = y + wrapped_x
+    assert_equal(3, z)
+    z = wrapped_x - y
+    assert_equal(-1, z)
+    z = y - wrapped_x
+    assert_equal(1, z)
+    z = wrapped_x * y
+    assert_equal(2, z)
+    z = y * wrapped_x
+    assert_equal(2, z)
+  end
+
+  def test_float()
+    x = 1.0
+    y = 2.0
+    wrapped_x = Runtime::ObjectWrapper.new(x)
+    z = wrapped_x + y
+    assert_equal(3, z)
+    z = y + wrapped_x
+    assert_equal(3, z)
+    z = wrapped_x - y
+    assert_equal(-1, z)
+    z = y - wrapped_x
+    assert_equal(1, z)
+    z = wrapped_x * y
+    assert_equal(2, z)
+    z = y * wrapped_x
+    assert_equal(2, z)
+  end
+
+  def test_string()
+    x = "1"
+    y = "2"
+    wrapped_x = Runtime::ObjectWrapper.new(x)
+    z = wrapped_x + y
+    assert_equal("12", z)
+    z = y + wrapped_x
+    assert_equal("21", z)
+  end
+
   def test_equalities_fixnum()
     x = 42
     wrapped_x = Runtime::ObjectWrapper.new(x)

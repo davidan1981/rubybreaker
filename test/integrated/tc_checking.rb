@@ -12,6 +12,9 @@ class IntegratedCheckingTest < Test::Unit::TestCase
     typesig("f2(fixnum[to_s]) -> string")
     def f2(x); x.to_s end
 
+    typesig("g2([to_s]) -> string")
+    def g2(x); x.to_s end
+
     typesig("f3(fixnum[foo, to_s]) -> string")
     def f3(x); x.to_s end
 
@@ -57,6 +60,14 @@ class IntegratedCheckingTest < Test::Unit::TestCase
   end
 
   def test_duck()
+    a = A.new
+    assert_nothing_thrown do
+      a.g2(2)
+      a.g2("2")
+    end
+  end
+
+  def test_fusion()
     a = A.new
     assert_nothing_thrown do
       a.f2(2)

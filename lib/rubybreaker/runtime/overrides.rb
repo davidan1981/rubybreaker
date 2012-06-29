@@ -19,6 +19,11 @@ module RubyBreaker
     # indicate overridden methods.
     OVERRIDE_PREFIX = "__rubybreaker"
 
+    # Prohibit these module/class+method from being overriden
+    BLACKLIST = {
+      String => [:to_s, :<<, :concat, :gsub],
+    }
+
   end
 
 end
@@ -53,8 +58,33 @@ end
 
 end
 
+[Symbol, Numeric, Fixnum, Float, Integer, Bignum, String].each do |mod|
+  mod.instance_methods(false).each do |meth_name|
+    black_list = RubyBreaker::Runtime::BLACKLIST
+    next if black_list[mod] && black_list[mod].include?(meth_name)
+    alias_name = "#{RubyBreaker::Runtime::OVERRIDE_PREFIX}_#{mod.object_id}" +
+                 "_#{meth_name}"
+    mod.module_eval <<-EOS
+
+    alias :"#{alias_name}" :"#{meth_name}"
+
+    def #{meth_name}(*args)
+      args = args.map do |arg|
+        if arg.respond_to?(RubyBreaker::Runtime::WRAPPED_INDICATOR)
+          arg.__rubybreaker_obj
+        else
+          arg
+        end
+      end
+      send(:"#{RubyBreaker::Runtime::OVERRIDE_PREFIX}_#{mod.object_id}_#{meth_name}",*args)
+    end
+
+    EOS
+  end
+end
+
 # TODO: add more modules here as necessary!
-[Object, Numeric, String, Symbol, Enumerable, Array, Hash].each do |mod| 
+[Object, Enumerable, Array, Hash].each do |mod| 
 
   [:"==", :equal?, :eql?].each do |meth_name|
 
