@@ -93,7 +93,7 @@ module RubyBreaker
           when :check
             mm.check_before_method(obj, meth_info)
           end
-        rescue Errors::TypeError => e
+        rescue ::Exception => e
           # Trap it, turn on the global monitor and then re-raise the
           # exception
           GLOBAL_MONITOR_SWITCH.turn_on()
@@ -121,7 +121,7 @@ module RubyBreaker
           when :check
             mm.check_after_method(obj, meth_info)
           end
-        rescue Errors::TypeError => e
+        rescue ::Exception => e
           # Trap it, turn on the global monitor and then re-raise the
           # exception
           GLOBAL_MONITOR_SWITCH.turn_on()

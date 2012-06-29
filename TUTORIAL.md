@@ -1,7 +1,7 @@
 # Tutorial
 
-This tutorial will describe the basic usage of the tool, the RubyBreaker
-Type Annotation Language, and the RubyBreaker Type System.
+This tutorial will describe the basic usages of the tool and the types
+supported by RubyBreaker.
 
 ## Usage
 
@@ -11,16 +11,36 @@ does require a minimum change in the Rakefile (but no code change in the
 source program) but is better for a long-term maintenance. Regardless of the
 mode you choose to run, no source code change is required. 
 
+### Running RubyBreaker
+
 Let us briefly see how RubyBreaker can be run directly as a command-line
 program to understand the overall concept of the tool. We will explain how
-to use RubyBreaker in a Rakefile later.
+to use RubyBreaker in a Rakefile later. The following is the banner of
+RubyBreaker when running in the command-line mode:
+
+    Usage: rubybreaker.rb [options] prog[.rb]
+        -b, --break MODULES              Specify modules/classes to 'break'
+        -c, --check MODULES              Specify modules/classes to check
+        -l, --libs LIBRARIES             Specify libraries to load
+            --debug                      Run in debug mode
+            --style STYLE                Select type signature style - underscore or camelize
+            --io-file FILE               Specify I/O file
+            --save-output                Save output to file
+        -s, --[no-]stdout                Show output on screen
+        -a, --[no-]append                Append output to input file
+        -v, --verbose                    Show messages in detail
+        -h, --help                       Show this help text
+
+#### Example
+
+Here is an example of running Rubybreaker as a command.
 
     $ rubybreaker -v -s -l lib.rb -b A,B prog.rb
 
-The above command runs RubyBreaker in verbose mode (`-v`) and will display
+This runs RubyBreaker in verbose mode (`-v`) and will display
 the output on the screen (`-s`). Before RubyBreaker runs `prog.rb`, it will
 import (`-l`) `lib.rb` and _break_ (`-b`) classes `A` and `B`.
-Here is `lib.rb`:
+Here is the source of `lib.rb`:
 
     class A
       def foo(x)
@@ -33,12 +53,12 @@ Here is `lib.rb`:
       end
     end
 
-And, `prog.rb` simply imports the library file and executes it:
+And, `prog.rb` simply imports the library file and executes `A#foo` with a
+number:
 
     require "lib"
     A.new.foo(1)
 
-This example will show how `A#foo` method is given a type by RubyBreaker.
 After running the command shown above, the following output will be
 generated and displayed on the screen:
 
@@ -46,11 +66,12 @@ generated and displayed on the screen:
       typesig("foo(fixnum[to_s]) -> string")
     end
 
+This example shows how RubyBreaker documents the type of `A#foo`.
 Here, the `typesig` method call registers `foo` as a method type that takes
 an object that has `Fixnum#to_s` method and returns a `String`. This
 method is made available simply by importing `rubybreaker`.  Now, assume
 that an additional code, `B.new.bar(A.new,1)`, is added at the end of
-`prog.rb`. The subsequent run will generate the following result:
+`prog.rb`. It generate the following result:
 
     class A
       typesig("foo(fixnum[to_s]) -> string")
@@ -66,6 +87,20 @@ coverage.  Additionally, RubyBreaker assumes that test runs are correct and
 the program behaves correctly (for those test runs) as intended by the
 programmer. This assumption is not a strong requirement, but is necessary to
 obtain precise and accurate type information. 
+
+#### Early Dynamic Type Checking
+
+RubyBreaker gives you an option to run the early dynamic type check. If a
+method is documented and its module is specified to be _type checked_, then
+RubyBreaker will verify if the argument types and the return type are
+appropriate at runtime. To allow this feature in command-line, use `-c`
+(checking) option:
+
+    rubybreaker -l lib.rb -c A prog.rb
+
+Here, the library code `lib.rb` will be imported (`-l`) and class `A` will
+be instrumented for type checking (`-c`) during the execution of `prog.rb`.
+We will explain how to run type checking in non-command mode.
 
 ### Using Ruby Unit Testing Framework
 
@@ -132,6 +167,27 @@ string literals to specify modules and classes (and with full namespace).
 If this is the route you are taking, there needs no editing of the source
 program whatsoever. This task will take care of instrumenting the specified
 modules and classes at proper moments.
+
+#### Early Dynamic Type Checking in Rakefile
+
+Previously, we explained how to perform type checking in the command mode.
+You can also specify which modules/classes to type check in the Rakfile. The
+following shows an example usage of `check` option.
+
+    require "rubybreaker/task"
+    ...
+    desc "Run RubyBreaker"
+    Rake::RubyBreakerTestTask.new(:"rubybreaker") do |t|
+      t.libs << "lib" 
+      t.test_files = ["test/foo/tc_foo1.rb"]
+      # ...Other test task options..
+      t.rubybreaker_opts << "-v"           # run in verbose mode
+      t.break = ["Class1", "Class2", ...]  # specify classes to monitor
+      t.check = ["Class3", ....] # specify classes to check
+    end
+
+Alternatively, you can use `RubyBreaker.check()` to specify classes to type
+check in the setup code of the test case.
 
 ## Type Annotation
 
@@ -289,29 +345,3 @@ compatibility between the return types and "promote" the method type to a
 method list type by spliting the type signature into two (or more in
 subsequent "promotions").
 
-### Early Dynamic Type Checking
-
-RubyBreaker gives you an option to run the early dynamic type check. If a
-method is documented and its module is specified to be _type checked_, then
-RubyBreaker will verify if the argument types and the return type are
-appropriate at runtime. To allow this feature in command-line, use `-c`
-(checking) option:
-
-    rubybreaker -l lib.rb -c A prog.rb
-
-Or use it in Rakefile:
-
-    require "rubybreaker/task"
-    ...
-    desc "Run RubyBreaker"
-    Rake::RubyBreakerTestTask.new(:"rubybreaker") do |t|
-      t.libs << "lib" 
-      t.test_files = ["test/foo/tc_foo1.rb"]
-      # ...Other test task options..
-      t.rubybreaker_opts << "-v"           # run in verbose mode
-      t.break = ["Class1", "Class2", ...]  # specify classes to monitor
-      t.check = ["Class3", ....] # specify classes to check
-    end
-
-Alternatively, you can use `RubyBreaker.check()` to specify classes to type
-check in the setup code of the test case.

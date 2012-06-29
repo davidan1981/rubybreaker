@@ -18,6 +18,10 @@ class IntegratedOriginalBehaviorTest < Test::Unit::TestCase
       end
     end
 
+    def baz()
+      raise "error"
+    end
+
   end
 
   def setup()
@@ -51,6 +55,13 @@ class IntegratedOriginalBehaviorTest < Test::Unit::TestCase
     x = nil
     y = a.bar(x)
     assert_equal(3, y)
+  end
+
+  def test_error()
+    a = A.new
+    assert_raise RuntimeError do
+      a.baz()
+    end
   end
 
 end
