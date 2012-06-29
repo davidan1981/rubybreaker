@@ -51,7 +51,13 @@ module RubyBreaker
     class TypeError < UserError
     end
 
-    class SubtypeFailure < TypeError
+    class ArityError < TypeError
+    end
+
+    class ArgumentTypeError < TypeError
+    end
+
+    class ReturnTypeError < TypeError
     end
 
   end

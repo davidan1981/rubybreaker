@@ -26,16 +26,16 @@ class ObjectWrapperTest < Test::Unit::TestCase
     end
   end
 
+  def setup
+    Runtime::GLOBAL_MONITOR_SWITCH.turn_on()
+  end
+
   def test_empty()
     x = 42
     wrapped_x = Runtime::ObjectWrapper.new(x)
     type = wrapped_x.__rubybreaker_type()
     str = TypeUnparser.unparse(type)
     assert_equal("fixnum[]",str)
-  end
-
-  def setup
-    Runtime::GLOBAL_MONITOR_SWITCH.turn_on()
   end
 
   def test_foo()

@@ -28,7 +28,7 @@ class RubyBreakerTestTaskTest < Test::Unit::TestCase
     assert_nothing_thrown do 
       b.foo(1)
     end
-    assert_raise Errors::TypeError do
+    assert_raise Errors::ArgumentTypeError do
       b.bar(:"1")
     end
   end

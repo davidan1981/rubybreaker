@@ -37,8 +37,11 @@ class IntegratedClassMethodsTest < Test::Unit::TestCase
     assert_nothing_thrown do
       B.bar(1)
     end
-    assert_raise Errors::TypeError do
+    assert_raise Errors::ArgumentTypeError do
       B.bar(:abc)
+    end
+    assert_raise Errors::ArityError do
+      B.bar(1, 2)
     end
   end
 
