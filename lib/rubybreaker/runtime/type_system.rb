@@ -171,9 +171,31 @@ module RubyBreaker
 
       # This method creates the prefix for the type error message.
       def type_error_msg_prefix(mod, meth_name)
+        # Match eigen class and returns a prefix that is a class method
+        # using dot (.) instead of double colons (::).
         result = /#<Class:(.+)>/.match("#{mod}")
         prefix = result ? "#{result[1]}." : "#{mod}#"
         return "#{prefix}#{meth_name}"
+      end
+
+      # This method performs the arity check. 
+      def arity_check(num_of_args, meth_type)
+        arg_types = meth_type.arg_types
+
+        opt = false
+        varlen = false
+        
+        arg_types.each_with_index do |arg_type, i|
+          if arg_type.kind_of?(OptionalType)
+            opt = true
+          elsif arg_type.kind_of?(VarLengthType)
+            varlen = true
+          end
+        end
+        check = (opt && num_of_args <= arg_types.size) || 
+                (varlen && num_of_args >= arg_types.size) ||
+                num_of_args == arg_types.size
+        return check
       end
 
       public
@@ -189,19 +211,55 @@ module RubyBreaker
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
         args = meth_info.args
-        blk = meth_info.blk
-        ret = meth_info.ret
+        # blk = meth_info.blk
 
         # Get the registered method type for this method
         meth_type = meth_type_map[meth_name]
 
-        args.each_with_index do |arg, i|
-          arg_type = NominalType.new(arg.class)
-          if !arg_type.subtype_of?(meth_type.arg_types[i])
+        # Do an arity check first. 
+        if !arity_check(args.size, meth_type)
+          msg = type_error_msg_prefix(mod, meth_name) +
+                " has an arity of #{meth_type.arg_types.size} " +
+                "but #{args.size} arguments were passed in"
+          raise Errors::ArityError.new(msg)
+        end
+
+        # Remember what the last formal argument type was so that, if it is
+        # a variable length argument type, we use to check the remaining
+        # arguments.
+        last_supertype = nil 
+
+        # Check actual arguments up until the last position of the formal
+        # argument type. If the number of the formal arguments is less than
+        # actual arguments, it means the last formal argument is a variable
+        # length. If it's the other way around, there are optional
+        # arguments.
+        meth_type.arg_types.each_with_index do |supertype, i|
+          if supertype.kind_of?(OptionalType) ||
+             supertype.kind_of?(VarLengthType)
+            supertype = supertype.type
+          end
+          last_supertype = supertype
+          break if i >= args.size 
+          subtype = NominalType.new(args[i].class)
+          if !subtype.subtype_of?(supertype)
             msg = type_error_msg_prefix(mod, meth_name) +
                   "'s #{Util.ordinalize(i+1)} argument " +
-                  "does not have type #{arg_type.unparse()}."
-            raise Errors::TypeError.new(msg)
+                  "does not have type #{supertype.unparse()}."
+            raise Errors::ArgumentTypeError.new(msg)
+          end
+        end
+
+        # Handle the remaining actual arguments
+        if meth_type.arg_types.size < args.size
+          for i in meth_type.arg_types.size..args.size-1
+            subtype = NominalType.new(args[i].class)
+            if !subtype.subtype_of?(last_supertype)
+              msg = type_error_msg_prefix(mod, meth_name) +
+                    "'s #{Util.ordinalize(i+1)} argument " +
+                    "does not have type #{last_supertype.unparse()}."
+              raise Errors::ArgumentTypeError.new(msg)
+            end
           end
         end
 
@@ -217,8 +275,6 @@ module RubyBreaker
 
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
-        args = meth_info.args
-        blk = meth_info.blk
         ret = meth_info.ret
 
         # Get the registered method type for this method
@@ -228,7 +284,7 @@ module RubyBreaker
         if !meth_type.ret_type.subtype_of?(ret_type)
           msg = type_error_msg_prefix(mod, meth_name) +
                 " return value does not have type #{ret_type.unparse()}."
-          raise Errors::TypeError.new(msg)
+          raise Errors::ReturnTypeError.new(msg)
         end
       end
       
@@ -251,7 +307,7 @@ module RubyBreaker
         ret = meth_info.ret
 
         args = args.map do |arg|
-          if arg.kind_of?(TrueClass) || arg.kind_of?(FalseClass)
+          if arg == nil || arg.kind_of?(TrueClass) || arg.kind_of?(FalseClass) 
             # XXX: would overrides resolve this issue?
             arg 
           else

@@ -21,6 +21,12 @@ class IntegratedCheckingTest < Test::Unit::TestCase
     typesig("f5(fixnum, fixnum) -> fixnum")
     def f5(x,y); x+y end
 
+    typesig("f6(fixnum, fixnum?, fixnum*) -> fixnum")
+    def f6(x, y=1, *z)
+      z = eval(z.join("+"))
+      x + y + (z ? z : 0)
+    end
+
   end
 
   def setup()
@@ -32,9 +38,22 @@ class IntegratedCheckingTest < Test::Unit::TestCase
     assert_nothing_thrown do
       a.f1(2)
     end
-    assert_raise RubyBreaker::Errors::TypeError do
+    assert_raise RubyBreaker::Errors::ArgumentTypeError do
       a.f1("2")
     end 
+  end
+
+  def test_arity()
+    a = A.new
+    assert_raise Errors::ArityError do
+      a.f1(1, 2)
+    end
+    assert_nothing_thrown do
+      a.f6(1, 2)
+      a.f6(1, 2, 3)
+      a.f6(1, 2, 3, 4)
+      a.f6(1, 2, 3, 4, 5)
+    end
   end
 
   def test_duck()
@@ -43,14 +62,14 @@ class IntegratedCheckingTest < Test::Unit::TestCase
       a.f2(2)
       a.f3(2) # This will pass too
     end
-    assert_raise RubyBreaker::Errors::TypeError do
+    assert_raise RubyBreaker::Errors::ArgumentTypeError do
       a.f3("2")
     end 
   end
 
   def test_ret()
     a = A.new
-    assert_raise RubyBreaker::Errors::TypeError do
+    assert_raise RubyBreaker::Errors::ReturnTypeError do
       a.f4(2)
     end
   end
@@ -60,10 +79,10 @@ class IntegratedCheckingTest < Test::Unit::TestCase
     assert_nothing_thrown do
       a.f5(1, 2)
     end
-    assert_raise RubyBreaker::Errors::TypeError do
+    assert_raise RubyBreaker::Errors::ArgumentTypeError do
       a.f5("1", 2)
     end
-    assert_raise RubyBreaker::Errors::TypeError do
+    assert_raise RubyBreaker::Errors::ArgumentTypeError do
       a.f5(1, "2")
     end
   end

@@ -70,14 +70,45 @@ module RubyBreaker
       def method_missing(mname,*args,&blk)
         ::RubyBreaker.log("Method_missing for #{mname}")
         if GLOBAL_MONITOR_SWITCH.switch
+
+          # Be safe and turn the switch off
+          GLOBAL_MONITOR_SWITCH.turn_off
+
           # Must handle send method specially (do not track them)
           if [:"__send__", :send].include?(mname)
             mname = args[0]
             args = args[1..-1]
           end
           @__rubybreaker_type.add_meth(mname)
+
+          # If self is not subject to breaking, then no need to send the
+          # wrapped arguments. This part is super IMPORTANT. Otherwise many
+          # native code stuff won't work including Numeric#+.
+          obj = self.__rubybreaker_obj
+          is_obj_mod = (obj.class == ::Class or obj.class == ::Module)
+          mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
+
+          # Monitor map doesn't exist MEANS it's not being monitored.
+          unless MONITOR_MAP[mod]
+            args.map! do |arg|
+              if arg.respond_to?(WRAPPED_INDICATOR)
+                arg.__rubybreaker_obj
+              else
+                arg
+              end
+            end
+          end
+
+          # Turn on the global switch again
+          GLOBAL_MONITOR_SWITCH.turn_on
+
+          # And call the original method 
           retval =  @__rubybreaker_obj.send(mname, *args, &blk)
-          retval = ObjectWrapper.new(retval)
+
+          # No need to wrap the object again...if it's wrapped already
+          unless retval.respond_to?(WRAPPED_INDICATOR)
+            retval = ObjectWrapper.new(retval)
+          end
         else
           retval = @__rubybreaker_obj.send(mname, *args, &blk)
         end
