@@ -11,8 +11,8 @@ Gem::Specification.new do |spec|
                      "It dynamically instruments code, monitors objects during execution, " +
                      "performs dynamic type checking, " +
                      "and generates type documentation based on the profiled information. " +
-                     "In other words, RubyBreaker \"breaks\" Ruby code out of its " +
-                     "obscurity and wildness (as in \"code breaking\" or \"horse breaking\") " +
+                     "RubyBreaker helps Ruby programs \"break\" out of " +
+                     "obscurities and convolutions " +
                      "by auto-documenting type information."
   spec.email = "rubybreaker@gmail.com"
   spec.files = FileList['lib/**/*', 'bin/**/*', '[A-Z]*', 'test/**/*', 'webpage/**/*'].to_a
