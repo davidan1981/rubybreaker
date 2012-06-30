@@ -105,10 +105,10 @@ module RubyBreaker
           # And call the original method 
           retval =  @__rubybreaker_obj.send(mname, *args, &blk)
 
-          # No need to wrap the object again...if it's wrapped already
-          unless retval.respond_to?(WRAPPED_INDICATOR)
-            retval = ObjectWrapper.new(retval)
-          end
+          # # No need to wrap the object again...if it's wrapped already
+          # unless retval.respond_to?(WRAPPED_INDICATOR)
+          #   retval = ObjectWrapper.new(retval)
+          # end
         else
           retval = @__rubybreaker_obj.send(mname, *args, &blk)
         end

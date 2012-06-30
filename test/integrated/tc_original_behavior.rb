@@ -22,10 +22,48 @@ class IntegratedOriginalBehaviorTest < Test::Unit::TestCase
       raise "error"
     end
 
+    def neg?(x)
+      return x < 0
+    end
+
+    def x_nil?(x)
+      return x.nil?
+    end
+
+    def factorial(x)
+      if x <= 1 
+        1
+      else
+        x * factorial(x - 1)
+      end
+    end
+
   end
 
   def setup()
     RubyBreaker.break(A)
+  end
+
+  def test_una_op
+    a = A.new
+    assert(a.x_nil?(nil))
+    assert(!a.x_nil?(1))
+  end
+
+  def test_bin_op
+    a = A.new
+    assert(a.neg?(-1))
+    assert(!a.neg?(1))
+  end
+
+  def test_factorial
+    a = A.new
+    b = a.factorial(4)
+    assert_equal(24, b)
+    b = a.factorial(1)
+    assert_equal(1, b)
+    b = a.factorial(0)
+    assert_equal(1, b)
   end
 
   def test_plus()

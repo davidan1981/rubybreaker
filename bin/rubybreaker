@@ -9,10 +9,10 @@ module RubyBreaker
     exit(1)
   end
 
-  # This method prepares shell mode execution of RubyBreaker.
+  # This method prepares the command mode execution of RubyBreaker.
   def self.main()
     RubyBreaker.setup_logger()
-    RubyBreaker.verbose("Running RubyBreaker in shell mode")
+    RubyBreaker.verbose("Running RubyBreaker in the command mode")
 
     # parse the command-line arguments
     OPTION_PARSER.parse!   
@@ -60,7 +60,7 @@ module RubyBreaker
       self.verbose("Done importing #{lib}")
     end
 
-    # Now, RubyBreaker shell mode will run this
+    # Runs the main library code at this point
     RubyBreaker.run()
 
     # Run the program file!
