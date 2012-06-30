@@ -68,11 +68,11 @@ module RubyBreaker
       
       # This method missing method redirects all other method calls.
       def method_missing(mname,*args,&blk)
-        ::RubyBreaker.log("Method_missing for #{mname}")
         if GLOBAL_MONITOR_SWITCH.switch
 
           # Be safe and turn the switch off
           GLOBAL_MONITOR_SWITCH.turn_off
+          ::RubyBreaker.log("Object wrapper method_missing for #{mname}")
 
           # Must handle send method specially (do not track them)
           if [:"__send__", :send].include?(mname)
@@ -110,6 +110,7 @@ module RubyBreaker
           #   retval = ObjectWrapper.new(retval)
           # end
         else
+          ::RubyBreaker.log("Object wrapper method_missing for #{mname}")
           retval = @__rubybreaker_obj.send(mname, *args, &blk)
         end
         return retval

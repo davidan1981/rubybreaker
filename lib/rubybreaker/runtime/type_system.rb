@@ -41,20 +41,30 @@ module RubyBreaker
         # most restrictive for the given test cases. 
         arg_types = []
 
+        # Resolve the argument types first.
         exist_meth_type.arg_types.each_with_index do |exist_arg_type, i|
           arg_type = nil
           new_arg_type = new_meth_type.arg_types[i]
           if !exist_arg_type 
-            # nil means there hasn't been any type observed
+            # nil means there hasn't been any type observed so use the new
+            # argument type as "resolved".
             arg_type = new_arg_type
           elsif new_arg_type.subtype_of?(exist_arg_type) 
+            # Pick the subtype argument since we are resolving in
+            # contra-variance
+            arg_type = new_arg_type
+          elsif exist_arg_type.subtype_of?(new_arg_type)
+            # Pick the subtype argument since we are resolving in
+            # contra-variance
             arg_type = exist_arg_type
-          elsif !exist_arg_type.subtype_of?(new_arg_type)
-            # No subtype relation between them, so OR them
+          else
+            # No subtype relation between them, so OR them.
             arg_type = OrType.new([new_arg_type, exist_arg_type])
           end
           arg_types << arg_type
         end
+
+        # Now, resolve the return type
 
         new_ret_type = new_meth_type.ret_type
         exist_ret_type = exist_meth_type.ret_type
@@ -63,10 +73,12 @@ module RubyBreaker
           ret_type = new_ret_type
           resolved = true
         elsif exist_ret_type.subtype_of?(new_ret_type) 
-          ret_type = exist_ret_type
+          # Co-variance
+          ret_type = new_ret_type
           resolved = true
         elsif new_ret_type.subtype_of?(exist_ret_type) 
-          ret_type = new_ret_type
+          # Co-variance
+          ret_type = exist_ret_type
           resolved = true
         else
           resolved = false
@@ -315,7 +327,7 @@ module RubyBreaker
           end
         end
 
-        RubyBreaker.log("In module monitor_before #{meth_name}")
+        RubyBreaker.log("break_before_method #{mod}##{meth_name}")
         
         meth_type = meth_type_map[meth_name]
         
@@ -359,16 +371,16 @@ module RubyBreaker
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
-        # Take things out
+        # Take things out of the method info object
         meth_name = meth_info.meth_name
         retval = meth_info.ret
         args = meth_info.args
         blk = meth_info.blk
 
-        RubyBreaker.log("In module monitor_after #{meth_name}")
+        RubyBreaker.log("break_after_method #{mod}##{meth_name}")
 
         # Compute the least upper bound
-        lub(obj, TYPE_MAP[mod],meth_name,retval,*args,&blk)
+        lub(obj, TYPE_MAP[mod], meth_name, retval, *args, &blk)
 
         if obj == retval  
           # It is possible that the method receiver is a wrapped object if

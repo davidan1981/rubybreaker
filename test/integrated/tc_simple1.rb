@@ -28,16 +28,36 @@ class IntegratedSimpleTest < Test::Unit::TestCase
       self
     end
 
+    def bazzz(x,n)
+      if n == 0
+        x.size
+      end
+      x.to_s
+      return 1
+    end
+
   end
 
   class B
     typesig("baz(string[size], true_class) -> fixnum")
     typesig("baz(string[to_s], false_class) -> string")
     def baz(x,b); end
+
+    typesig("bazzz(string[size, to_s], fixnum[==]) -> fixnum")
+    def bazzz(x, n); end
   end
 
   def setup()
     RubyBreaker.break(A)
+  end
+
+  def test_intersect
+    a = A.new
+    a.bazzz("abc", 0)
+    a.bazzz("abc", 1)
+    meth_type = Runtime::Inspector.inspect_meth(A, :bazzz)
+    str = TypeUnparser.unparse(meth_type)
+    assert_equal("bazzz(string[size, to_s], fixnum[==]) -> fixnum", str)
   end
 
   def test_simple1_a_foo

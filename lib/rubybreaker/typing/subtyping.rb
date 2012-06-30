@@ -193,6 +193,7 @@ module RubyBreaker
               rhs_arg = rhs_arg.type
             end
           end
+          # Remember, the contra-variance
           if !self.subtype_rel?(rhs_arg, lhs_arg)
             is_subtype = false
             break

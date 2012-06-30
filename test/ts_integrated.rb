@@ -8,4 +8,5 @@ require_relative "integrated/tc_class_methods"
 require_relative "integrated/tc_both_documented_and_undocumented"
 require_relative "integrated/tc_namespace"
 require_relative "integrated/tc_checking"
+require_relative "integrated/tc_simple_algorithms"
 
