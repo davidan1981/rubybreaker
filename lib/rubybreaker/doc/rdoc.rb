@@ -5,7 +5,7 @@ module RubyBreaker
 
   # This module has functionalities that are necessary for supporting RDoc
   # output
-  module RDocSupport
+  module RDocSupport #:nodoc:
 
     include TypeDefs
 

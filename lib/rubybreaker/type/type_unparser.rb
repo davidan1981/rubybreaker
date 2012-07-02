@@ -93,8 +93,7 @@ module RubyBreaker
         t.arg_types.each_with_index do |arg_type,i|
           unparse_pp(pp, arg_type, opts)
           if i < t.arg_types.size - 1
-            pp.text(",")
-            pp.fill_breakable()
+            pp.text(", ")
           end 
         end
         pp.text(")")
@@ -105,16 +104,14 @@ module RubyBreaker
           pp.text("}")
           pp.fill_breakable()
         end
-        pp.text("->")
-        pp.fill_breakable()
+        pp.text("-> ")
         unparse_pp(pp, t.ret_type, opts)
       elsif t.instance_of?(BlockType)
         pp.text("|")
         t.arg_types.each_with_index do |arg_type,i|
           unparse_pp(pp, arg_type, opts)
           if i < t.arg_types.size - 1
-            pp.text(",")
-            pp.fill_breakable()
+            pp.text(", ")
           end 
         end
         pp.text("|")
@@ -125,8 +122,7 @@ module RubyBreaker
           pp.text("}")
           pp.fill_breakable()
         end
-        pp.text("->")
-        pp.fill_breakable()
+        pp.text("-> ")
         unparse_pp(pp, t.ret_type, opts)
       elsif t.instance_of?(MethodListType)
         t.types.each_with_index do |typ,i|
