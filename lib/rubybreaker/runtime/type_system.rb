@@ -225,6 +225,8 @@ module RubyBreaker
         args = meth_info.args
         # blk = meth_info.blk
 
+        RubyBreaker.log("check_before_method #{mod}##{meth_name} started")
+
         # Get the registered method type for this method
         meth_type = meth_type_map[meth_name]
 
@@ -275,6 +277,7 @@ module RubyBreaker
           end
         end
 
+        RubyBreaker.log("check_before_method #{mod}##{meth_name} ended")
       end
 
       # This method is invoked after the original method is executed.
@@ -282,12 +285,15 @@ module RubyBreaker
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
+        # Get the method type map for the module/class from the global map.
         meth_type_map = TYPE_MAP[mod]
-        return unless meth_type_map
+        return unless meth_type_map 
 
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
         ret = meth_info.ret
+
+        RubyBreaker.log("check_after_method #{mod}##{meth_name} started")
 
         # Get the registered method type for this method
         meth_type = meth_type_map[meth_name]
@@ -298,6 +304,8 @@ module RubyBreaker
                 " return value does not have type #{ret_type.unparse()}."
           raise Errors::ReturnTypeError.new(msg)
         end
+
+        RubyBreaker.log("check_after_method #{mod}##{meth_name} started")
       end
       
       # This method occurs before every call to a "monitored" method in a
@@ -310,30 +318,37 @@ module RubyBreaker
         is_obj_mod = (obj.class == Class or obj.class == Module)
         mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
-        meth_type_map = TYPE_MAP[mod]
-
         # Let's take things out of the MethodInfo object
         meth_name = meth_info.meth_name
         args = meth_info.args
         blk = meth_info.blk
         ret = meth_info.ret
 
+        RubyBreaker.log("break_before_method #{mod}##{meth_name} started")
+        
         args = args.map do |arg|
           if arg == nil || arg.kind_of?(TrueClass) || arg.kind_of?(FalseClass) 
             # XXX: would overrides resolve this issue?
             arg 
+          elsif arg.respond_to?(WRAPPED_INDICATOR)
+            # Don't need to wrap an object that is already wrapped
+            arg
           else
             ObjectWrapper.new(arg)
           end
         end
 
-        RubyBreaker.log("break_before_method #{mod}##{meth_name}")
-        
+        # Using this module object, retrieve the method type map which
+        # maps method names to method types.
+        meth_type_map = TYPE_MAP[mod]
+
+        # Using the method name, get the type of this method from the map.
         meth_type = meth_type_map[meth_name]
         
         if meth_type
           # This means the method type has been created previously.
-          unless (blk == nil && meth_type.blk_type == nil) &&
+          unless !meth_type.instance_of?(MethodType) ||
+                 (blk == nil && meth_type.blk_type == nil) &&
                  (!blk || blk.arity == meth_type.blk_type.arg_types.length)
             raise Errors::TypeError.new("Block usage is inconsistent")
           end
@@ -361,6 +376,8 @@ module RubyBreaker
 
         meth_info.args = args
 
+        RubyBreaker.log("break_before_method #{mod}##{meth_name} ended")
+
       end
 
       # This method occurs after every call to a "monitored" method call of
@@ -377,7 +394,7 @@ module RubyBreaker
         args = meth_info.args
         blk = meth_info.blk
 
-        RubyBreaker.log("break_after_method #{mod}##{meth_name}")
+        RubyBreaker.log("break_after_method #{mod}##{meth_name} started")
 
         # Compute the least upper bound
         lub(obj, TYPE_MAP[mod], meth_name, retval, *args, &blk)
@@ -389,6 +406,8 @@ module RubyBreaker
           # version. (Remember, == is overridden for the wrapped object.)
           meth_info.ret = obj
         end
+
+        RubyBreaker.log("break_after_method #{mod}##{meth_name} ended")
 
       end
 

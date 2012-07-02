@@ -4,6 +4,7 @@ require_relative "../../lib/rubybreaker"
 class IntegratedSimpleAlgorithmsTest < Test::Unit::TestCase
   include RubyBreaker
 
+  # The contents of the following class is taken from Opus8:
   #
   # This class contains the Ruby code from Program 2.x of
   # "Data Structures and Algorithms

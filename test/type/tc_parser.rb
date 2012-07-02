@@ -189,7 +189,19 @@ class GrammarTest < Test::Unit::TestCase
     #puts str
     assert_equal("foo([m1, m2, m3?]) -> fixnum",str)    
   end
+
+  def test_method_duck_array_index_method
+    type = @parser.parse("foo([[]]) -> fixnum").value
+    str = TypeUnparser.unparse(type)
+    assert_equal("foo([[]]) -> fixnum", str)
+  end
   
+  def test_method_duck_array_more_methods
+    type = @parser.parse("foo([[],[]=]) -> fixnum").value
+    str = TypeUnparser.unparse(type)
+    assert_equal("foo([[], []=]) -> fixnum", str)
+  end
+
   def test_method_fusion_arg
     type = @parser.parse("foo(fixnum[to_s]) -> fixnum").value
     str = TypeUnparser.unparse(type)
@@ -204,6 +216,18 @@ class GrammarTest < Test::Unit::TestCase
     assert_equal("foo(fixnum[to_i, to_s]) -> fixnum",str)    
   end
   
+  def test_method_fusion_array_index_method
+    type = @parser.parse("foo(array[[]]) -> fixnum").value
+    str = TypeUnparser.unparse(type)
+    assert_equal("foo(array[[]]) -> fixnum", str)
+  end
+  
+  def test_method_fusion_array_more_methods
+    type = @parser.parse("foo(array[[],[]=]) -> fixnum").value
+    str = TypeUnparser.unparse(type)
+    assert_equal("foo(array[[], []=]) -> fixnum", str)
+  end
+
   def test_space_around
     type = @parser.parse("    foo() -> nil ").value
     str = TypeUnparser.unparse(type)

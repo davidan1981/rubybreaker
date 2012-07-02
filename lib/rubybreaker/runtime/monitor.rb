@@ -94,13 +94,12 @@ module RubyBreaker
             mm.check_before_method(obj, meth_info)
           end
         rescue ::Exception => e
+          RubyBreaker.log("Exception #{e.class} has been raised.", :debug, CONTEXT)
           # Trap it, turn on the global monitor and then re-raise the
           # exception
           GLOBAL_MONITOR_SWITCH.turn_on()
           raise e
         end
-
-        RubyBreaker.log("break_before_method ended")
 
         # we are going to turn the switch back on
         GLOBAL_MONITOR_SWITCH.turn_on()
@@ -109,9 +108,10 @@ module RubyBreaker
         retval = obj.send(stub_meth_name.to_sym, *meth_info.args,
                           &meth_info.blk)
 
-        # turn it off
+        # turn the switch off again
         GLOBAL_MONITOR_SWITCH.turn_off()
 
+        # Remember the return value in the method info object.
         meth_info.ret = retval
 
         begin
@@ -124,6 +124,7 @@ module RubyBreaker
         rescue ::Exception => e
           # Trap it, turn on the global monitor and then re-raise the
           # exception
+          RubyBreaker.log("Exception #{e.class} has been raised.", :debug, CONTEXT)
           GLOBAL_MONITOR_SWITCH.turn_on()
           raise e
         end
@@ -143,7 +144,7 @@ module RubyBreaker
 
       # This method returns the alternative (renamed) method name
       def self.get_alt_meth_name(meth_name)
-        return "__#{meth_name}"
+        return "__rubybreaker_#{meth_name}"
       end
 
       # This method returns the original method name
@@ -237,11 +238,11 @@ module RubyBreaker
       # Installs an module (class) monitor to the object. 
       def self.install_monitor(monitor_type, mod)
 
-        RubyBreaker.log("Installing module monitor for #{mod}")
+        RubyBreaker.log("Installing #{monitor_type} monitor for #{mod} started.")
 
         # Do not re-install monitor if already done so.
         if MONITOR_MAP[mod] 
-          RubyBreaker.log("Skip #{mod} as it has a monitor installed.")
+          RubyBreaker.log("#{mod} already has a monitor installed.")
           return
         end
 
@@ -266,6 +267,7 @@ module RubyBreaker
           end
         end
 
+        RubyBreaker.log("Installing #{monitor_type} monitor for #{mod} ended.")
       end
 
     end

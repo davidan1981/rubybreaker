@@ -35,13 +35,25 @@ module RubyBreaker
         return @__rubybreaker_type
       end
 
+      # This method computes the wrap level of any given wrapped object. In
+      # theory, this should always be 1. 
+      #
+      # Used for internal debugging purpose only
+      def __rubybreaker_wrap_level() #:nodoc:
+        val = 1
+        if @__rubybreaker_obj.respond_to?(WRAPPED_INDICATOR)
+          val += @__rubybreaker_obj.__rubybreaker_wrap_level
+        end
+        return val
+      end
+
       #--
       # The following code generates the "serious problem" warning which is
       # suppressed by the hack using $VERBOSE. This is ok.  This meta
       # programming code block re-defines BasicObject's methods to redirect
       # to the actual object.
       [:"!", :"!=", :"==", :"equal?", :"eql?", :"__id__", :"object_id",
-        :"send", :"__send__", :"instance_eval", 
+        :"send", :"__send__", :"instance_eval", :class,
         :"instance_exec"].each do |meth|
 
         orig_verbose = $VERBOSE
@@ -65,6 +77,12 @@ module RubyBreaker
         return true if mname.to_sym == WRAPPED_INDICATOR
         return @__rubybreaker_obj.respond_to?(mname)
       end
+
+      # # Keep track of methods that MUST NOT take wrapped arguments.
+      # WRAP_BLACKLIST = {
+      #   ::Array => [:[], :[]=],
+      #   ::Hash => [:[], :[]=],
+      # }
       
       # This method missing method redirects all other method calls.
       def method_missing(mname,*args,&blk)
@@ -72,7 +90,7 @@ module RubyBreaker
 
           # Be safe and turn the switch off
           GLOBAL_MONITOR_SWITCH.turn_off
-          ::RubyBreaker.log("Object wrapper method_missing for #{mname}")
+          ::RubyBreaker.log("Object wrapper method_missing for #{mname} started")
 
           # Must handle send method specially (do not track them)
           if [:"__send__", :send].include?(mname)
@@ -88,16 +106,18 @@ module RubyBreaker
           is_obj_mod = (obj.class == ::Class or obj.class == ::Module)
           mod = is_obj_mod ? Runtime.eigen_class(obj) : obj.class
 
-          # Monitor map doesn't exist MEANS it's not being monitored.
-          unless MONITOR_MAP[mod]
-            args.map! do |arg|
-              if arg.respond_to?(WRAPPED_INDICATOR)
-                arg.__rubybreaker_obj
-              else
-                arg
-              end
-            end
-          end
+          # # There are certain methods that should not take wrapped
+          # # argument(s) whatsoever. Use WRAP_BLACKLIST for these.
+          # if !MONITOR_MAP[mod] && WRAP_BLACKLIST[mod] &&
+          #    WRAP_BLACKLIST[mod].include?(mname)
+          #   args.map! do |arg|
+          #     if arg.respond_to?(WRAPPED_INDICATOR)
+          #       arg.__rubybreaker_obj
+          #     else
+          #       arg
+          #     end
+          #   end
+          # end
 
           # Turn on the global switch again
           GLOBAL_MONITOR_SWITCH.turn_on
@@ -110,9 +130,10 @@ module RubyBreaker
           #   retval = ObjectWrapper.new(retval)
           # end
         else
-          ::RubyBreaker.log("Object wrapper method_missing for #{mname}")
+          ::RubyBreaker.log("Object wrapper method_missing for #{mname} started")
           retval = @__rubybreaker_obj.send(mname, *args, &blk)
         end
+        ::RubyBreaker.log("Object wrapper method_missing for #{mname} ended")
         return retval
       end
     end
