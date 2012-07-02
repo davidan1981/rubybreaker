@@ -1,8 +1,10 @@
 # VERSION 0.0.9
-* More critical bug fixes
+* More critical bug fixes, including selecting correct argument types and return type. 
+* RubyBreaker works on very tiny real programs now. More testing and samples
+  coming soon!
 
 # VERSION 0.0.8
-* Bug fixes
+* Bug fixes.
 
 # VERSION 0.0.7
 * Early dynamic type check is implemented.
